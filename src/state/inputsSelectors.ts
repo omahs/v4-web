@@ -68,9 +68,24 @@ export const getTransferInputErrors = (state: RootState) => {
 
 /**
  * @param state
+ * @returns input errors for Trigger Orders
+ */
+export const getTriggerOrdersInputErrors = (state: RootState) => {
+  const currentInput = state.inputs.current;
+  return currentInput === 'triggerOrders' ? getInputErrors(state) : [];
+};
+
+/**
+ * @param state
  * @returns TransferInputs
  */
 export const getTransferInputs = (state: RootState) => state.inputs.transferInputs;
+
+/**
+ * @param state
+ * @returns TriggerOrdersInputs
+ */
+export const getTriggerOrdersInputs = (state: RootState) => state.inputs.triggerInputs;
 
 /**
  * @param state

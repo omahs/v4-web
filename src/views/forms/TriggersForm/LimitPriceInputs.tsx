@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import styled, { AnyStyledComponent } from 'styled-components';
 
+import { TriggerOrder } from '@/constants/abacus';
 import { STRING_KEYS } from '@/constants/localization';
 import { USD_DECIMALS } from '@/constants/numbers';
 
@@ -14,8 +15,11 @@ import { Collapsible } from '@/components/Collapsible';
 import { FormInput } from '@/components/FormInput';
 import { Tag } from '@/components/Tag';
 import { WithTooltip } from '@/components/WithTooltip';
+import { isConditionalLimitOrderType } from '@/lib/orders';
 
 type ElementProps = {
+  stopLossOrder?: TriggerOrder;
+  takeProfitOrder?: TriggerOrder;
   tickSizeDecimals?: number;
 };
 
@@ -23,10 +27,22 @@ type StyleProps = {
   className?: string;
 };
 
-export const LimitPriceInputs = ({ tickSizeDecimals, className }: ElementProps & StyleProps) => {
+export const LimitPriceInputs = ({ stopLossOrder, takeProfitOrder, tickSizeDecimals, className }: ElementProps & StyleProps) => {
   const stringGetter = useStringGetter();
 
   const [shouldShowLimitPrice, setShouldShowLimitPrice] = useState(false);
+
+  useEffect(() => {
+    setShouldShowLimitPrice(isConditionalLimitOrderType(stopLossOrder?.type) || isConditionalLimitOrderType(takeProfitOrder?.type))
+  }, [stopLossOrder, takeProfitOrder]) // xcxc this might break if you're updating the order type
+
+  const onCheckLimit = (checked: boolean) => {
+    if (!checked) {
+      // should signify it is a market order now
+
+    }
+    setShouldShowLimitPrice(checked)
+  }
 
   return (
     <>
@@ -47,6 +63,7 @@ export const LimitPriceInputs = ({ tickSizeDecimals, className }: ElementProps &
             <FormInput
               id="TP-limit"
               decimals={tickSizeDecimals ?? USD_DECIMALS}
+              value={isConditionalLimitOrderType(takeProfitOrder?.type) ? takeProfitOrder?.price?.limitPrice : null}
               label={
                 <>
                   {stringGetter({ key: STRING_KEYS.TP_LIMIT })}
@@ -57,6 +74,7 @@ export const LimitPriceInputs = ({ tickSizeDecimals, className }: ElementProps &
             <FormInput
               id="SL-limit"
               decimals={tickSizeDecimals ?? USD_DECIMALS}
+              value={isConditionalLimitOrderType(stopLossOrder?.type) ? stopLossOrder?.price?.limitPrice : null}
               label={
                 <>
                   {stringGetter({ key: STRING_KEYS.SL_LIMIT })}

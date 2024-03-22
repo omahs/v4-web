@@ -1,7 +1,8 @@
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import styled, { type AnyStyledComponent } from 'styled-components';
 
-import { type SubaccountOrder } from '@/constants/abacus';
+import { TriggerOrdersInputField, type SubaccountOrder } from '@/constants/abacus';
 import { ButtonAction } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
 
@@ -16,6 +17,10 @@ import { getPositionDetails } from '@/state/accountSelectors';
 
 import { AdvancedTriggersOptions } from './AdvancedTriggersOptions';
 import { TriggerOrderInputs } from './TriggerOrderInputs';
+
+import abacusStateManager from '@/lib/abacus';
+import { getTriggerOrdersInputs } from '@/state/inputsSelectors';
+import { TradeTypes } from '@/constants/trade';
 
 type ElementProps = {
   marketId: string;
@@ -34,10 +39,58 @@ export const TriggersForm = ({
 
   const { asset, entryPrice, stepSizeDecimals, tickSizeDecimals, oraclePrice } =
     useSelector(getPositionDetails(marketId)) || {};
+
+  const { stopLossOrder, takeProfitOrder } = useSelector(getTriggerOrdersInputs, shallowEqual) || {};
+
   const symbol = asset?.id ?? '';
 
   const isDisabled = false; // TODO: CT-625 Update based on whether values are populated based on abacus
   const isEditingExistingTriggers = stopLossOrders.length > 0 || takeProfitOrders.length > 0;
+
+  useEffect(() => {
+    if (stopLossOrders.length == 1) {
+      const {size, triggerPrice, price, type} = stopLossOrders[0];
+      abacusStateManager.setTriggerOrdersValue({
+        field: TriggerOrdersInputField.size,
+        value: size
+      })
+      abacusStateManager.setTriggerOrdersValue({
+        field: TriggerOrdersInputField.stopLossPrice,
+        value: triggerPrice
+      })
+      abacusStateManager.setTriggerOrdersValue({
+        field: TriggerOrdersInputField.stopLossLimitPrice,
+        value: price
+      })
+      abacusStateManager.setTriggerOrdersValue({
+        field: TriggerOrdersInputField.stopLossOrderType,
+        value: type.rawValue
+      })
+      console.log("Xcxc size", size)
+      // xcxc we don't set percent here, we calculate it in abacus based on stop loss limit and return it?
+    }
+    if (takeProfitOrders.length == 1) {
+      const {size, triggerPrice, price, type} = takeProfitOrders[0];
+      abacusStateManager.setTriggerOrdersValue({
+        field: TriggerOrdersInputField.size,
+        value: size
+      })
+      abacusStateManager.setTriggerOrdersValue({
+        field: TriggerOrdersInputField.takeProfitPrice,
+        value: triggerPrice
+      })
+      abacusStateManager.setTriggerOrdersValue({
+        field: TriggerOrdersInputField.takeProfitLimitPrice,
+        value: price
+      })
+      abacusStateManager.setTriggerOrdersValue({
+        field: TriggerOrdersInputField.takeProfitOrderType,
+        value: type.rawValue
+      })
+      console.log("Xcxc size", size)
+      // xcxc we don't set percent here, we calculate it in abacus based on stop loss limit and return it?
+    }
+  }, []);
 
   // The triggers form does not support editing multiple stop loss or take profit orders - so if both have
   // multiple, we hide the triggers button CTA
@@ -69,8 +122,11 @@ export const TriggersForm = ({
           price: STRING_KEYS.TP_PRICE,
           output: STRING_KEYS.GAIN,
         }}
-        orders={takeProfitOrders}
+        // orders={takeProfitOrders}
+        tickSizeDecimals={tickSizeDecimals}
         onViewOrdersClick={onViewOrdersClick}
+        isMultiple={takeProfitOrders.length > 1}
+        price={takeProfitOrder?.price}
       />
       <TriggerOrderInputs
         symbol={symbol}
@@ -80,14 +136,18 @@ export const TriggersForm = ({
           price: STRING_KEYS.SL_PRICE,
           output: STRING_KEYS.LOSS,
         }}
-        orders={stopLossOrders}
+        // orders={stopLossOrders}
         tickSizeDecimals={tickSizeDecimals}
         onViewOrdersClick={onViewOrdersClick}
+        isMultiple={stopLossOrders.length > 1}
+        price={stopLossOrder?.price}
       />
       {existsEditableOrCreatableOrders && (
         <>
           <AdvancedTriggersOptions
             symbol={symbol}
+            stopLossOrder={stopLossOrder} // xcxc can clean up
+            takeProfitOrder={takeProfitOrder}
             stepSizeDecimals={stepSizeDecimals}
             tickSizeDecimals={tickSizeDecimals}
           />

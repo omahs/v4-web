@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import styled, { AnyStyledComponent } from 'styled-components';
 
-import { type SubaccountOrder } from '@/constants/abacus';
+import { type TriggerOrdersInputPrice, type TriggerOrder, Nullable, type SubaccountOrder, TriggerOrdersInputs } from '@/constants/abacus';
 import { ButtonAction } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
 import { PERCENT_DECIMALS, USD_DECIMALS } from '@/constants/numbers';
@@ -29,20 +29,26 @@ type ElementProps = {
     price: string;
     output: string;
   };
-  orders: SubaccountOrder[];
+  // orders: SubaccountOrder[];
   tickSizeDecimals?: number;
   onViewOrdersClick: () => void;
+  isMultiple: boolean;
+  price?: Nullable<TriggerOrdersInputPrice>;
 };
 
 export const TriggerOrderInputs = ({
   symbol,
   tooltipId,
   stringKeys,
-  orders,
+  // orders,
   tickSizeDecimals,
   onViewOrdersClick,
+  isMultiple,
+  price,
 }: ElementProps) => {
   const stringGetter = useStringGetter();
+
+  const { triggerPrice, triggerPriceDiff } = price ?? {};
 
   const [inputType, setInputType] = useState<InputChangeType>(InputType.Percent);
 
@@ -88,13 +94,15 @@ export const TriggerOrderInputs = ({
     </Styled.MultipleOrdersContainer>
   );
 
+  // xcxc to update here we need to make a hook to call into the input values, and listen. Look at useTradeFormInputs
+
   return (
     <Styled.TriggerRow key={tooltipId}>
       <WithTooltip tooltip={tooltipId}>
         <h3>{stringGetter({ key: stringKeys.header })}</h3>
       </WithTooltip>
       <Styled.InlineRow>
-        {orders.length > 1 ? (
+        {isMultiple ? (
           multipleOrdersButton()
         ) : (
           <>
@@ -108,13 +116,14 @@ export const TriggerOrderInputs = ({
               }
               type={InputType.Currency}
               decimals={tickSizeDecimals}
-              value={orders.length === 1 ? orders[0].triggerPrice : null}
+              value={triggerPrice ?? null}
             />
             <FormInput
               id={`${tooltipId}-priceDiff`}
               label={stringGetter({ key: stringKeys.output })}
               decimals={getDecimalsForInputType(inputType)}
               type={InputType.Number}
+              value={inputType === InputType.Percent ? triggerPriceDiff?.percent : triggerPriceDiff?.usdc}
               slotRight={priceDiffSelector({
                 value: inputType,
                 onValueChange: (value: InputChangeType) => setInputType(value),

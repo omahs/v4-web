@@ -108,6 +108,7 @@ export type TradeInputs = Abacus.exchange.dydx.abacus.output.input.TradeInput;
 export type ClosePositionInputs = Abacus.exchange.dydx.abacus.output.input.ClosePositionInput;
 export type TradeInputSummary = Abacus.exchange.dydx.abacus.output.input.TradeInputSummary;
 export type TransferInputs = Abacus.exchange.dydx.abacus.output.input.TransferInput;
+export type TriggerOrdersInputs = Abacus.exchange.dydx.abacus.output.input.TriggerOrdersInput;
 export type InputError = Abacus.exchange.dydx.abacus.output.input.ValidationError;
 export type TransferInputTokenResource =
   Abacus.exchange.dydx.abacus.output.input.TransferInputTokenResource;
@@ -157,6 +158,14 @@ export type TransferInputFields = (typeof transferInputFields)[number];
 export const TransferType = Abacus.exchange.dydx.abacus.output.input.TransferType;
 const transferTypes = [...TransferType.values()] as const;
 export type TransferTypes = (typeof transferTypes)[number];
+
+// ------ Trigger Order Items ------ //
+export const TriggerOrdersInputField =
+  Abacus.exchange.dydx.abacus.state.model.TriggerOrdersInputField;
+const triggerOrdersInputFields = [...TriggerOrdersInputField.values()] as const;
+export type TriggerOrdersInputFields = (typeof triggerOrdersInputFields)[number];
+export type TriggerOrdersInputPrice = Abacus.exchange.dydx.abacus.output.input.TriggerOrdersInputPrice;
+export type TriggerOrder = Abacus.exchange.dydx.abacus.output.input.TriggerOrder;
 
 // ------ Trade Items ------ //
 export const TradeInputField = Abacus.exchange.dydx.abacus.state.model.TradeInputField;

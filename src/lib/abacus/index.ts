@@ -8,6 +8,7 @@ import type {
   HumanReadablePlaceOrderPayload,
   HumanReadableCancelOrderPayload,
   TradeInputFields,
+  TriggerOrdersInputFields,
   TransferInputFields,
   HistoricalPnlPeriods,
   ParsingError,
@@ -25,6 +26,7 @@ import {
   TransferType,
   AbacusAppConfig,
   ApiData,
+  TriggerOrdersInputField,
 } from '@/constants/abacus';
 import { DEFAULT_MARKETID } from '@/constants/markets';
 import { CURRENT_ABACUS_DEPLOYMENT, type DydxNetwork, isMainnet } from '@/constants/networks';
@@ -170,6 +172,24 @@ class AbacusStateManager {
     this.setTransferValue({ value: null, field: TransferInputField.usdcSize });
   };
 
+  clearTriggerOrdersInputValues = () => {
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.size })
+
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossOrderType })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossPrice })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossLimitPrice })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossPercentDiff })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossUsdcDiff })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossPriceDiffInput })
+
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitOrderType })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitPrice })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitLimitPrice })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitPercentDiff })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitUsdcDiff })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitPriceDiffInput })
+  }
+
   resetInputState = () => {
     this.clearTransferInputValues();
     this.setTransferValue({
@@ -177,6 +197,7 @@ class AbacusStateManager {
       value: null,
     });
     this.clearTradeInputValues();
+    this.clearTriggerOrdersInputValues();
   };
 
   // ------ Set Data ------ //
@@ -219,6 +240,11 @@ class AbacusStateManager {
   setTransferValue = ({ value, field }: { value: any; field: TransferInputFields }) => {
     this.stateManager.transfer(value, field);
   };
+
+  setTriggerOrdersValue = ({ value, field} : {value: any, field: TriggerOrdersInputFields }) => {
+    console.log("Xcxc setting trigger orders field ", field, " to value ", value)
+    this.stateManager.triggerOrders(value, field);
+  }
 
   setHistoricalPnlPeriod = (
     period: (typeof HistoricalPnlPeriod)[keyof typeof HistoricalPnlPeriod]

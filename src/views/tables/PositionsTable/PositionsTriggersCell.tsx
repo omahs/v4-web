@@ -131,11 +131,6 @@ export const PositionsTriggersCell = ({
       const order = orders[0];
       const { price, size, triggerPrice, timeInForce, type } = order;
 
-      const shouldRenderValue =
-        timeInForce?.name === TimeInForceOptions.IOC &&
-        (isMarketOrderType(type) || price === triggerPrice);
-
-      if (shouldRenderValue) {
         const isPartialPosition = !!(positionSize && Math.abs(size) < Math.abs(positionSize));
         const liquidationWarningSide = showLiquidationWarning(order) ? positionSide : undefined;
 
@@ -172,7 +167,6 @@ export const PositionsTriggersCell = ({
             )}
           </>
         );
-      }
     }
 
     return (

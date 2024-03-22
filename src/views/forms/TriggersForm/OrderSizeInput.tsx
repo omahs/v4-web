@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import styled, { AnyStyledComponent } from 'styled-components';
 
 import { STRING_KEYS } from '@/constants/localization';
 
 import { useStringGetter } from '@/hooks';
+
+import { TriggerOrder } from '@/constants/abacus';
 
 import { Checkbox } from '@/components/Checkbox';
 import { Collapsible } from '@/components/Collapsible';
@@ -17,6 +19,8 @@ import { OrderSizeSlider } from './OrderSizeSlider';
 
 type ElementProps = {
   symbol: string;
+  stopLossOrder?: TriggerOrder;
+  takeProfitOrder?: TriggerOrder;
   stepSizeDecimals?: number;
 };
 
@@ -26,6 +30,8 @@ type StyleProps = {
 
 export const OrderSizeInput = ({
   symbol,
+  stopLossOrder,
+  takeProfitOrder,
   stepSizeDecimals,
   className,
 }: ElementProps & StyleProps) => {
@@ -33,6 +39,12 @@ export const OrderSizeInput = ({
 
   const [shouldShowCustomAmount, setShouldShowCustomAmount] = useState(false);
 
+  useEffect(() => {
+    const notFullAmount = false;
+    setShouldShowCustomAmount(notFullAmount);
+  }, [
+    stopLossOrder, takeProfitOrder
+  ]) // xcxc this might break if you're updating the order type
   return (
     <Collapsible
       slotTrigger={

@@ -8,11 +8,15 @@ import { layoutMixins } from '@/styles/layoutMixins';
 
 import { HorizontalSeparatorFiller } from '@/components/Separator';
 
+import { TriggerOrder } from '@/constants/abacus';
+
 import { LimitPriceInputs } from './LimitPriceInputs';
 import { OrderSizeInput } from './OrderSizeInput';
 
 type ElementProps = {
   symbol: string;
+  stopLossOrder?: TriggerOrder;
+  takeProfitOrder?: TriggerOrder;
   stepSizeDecimals?: number;
   tickSizeDecimals?: number;
 };
@@ -23,6 +27,8 @@ type StyleProps = {
 
 export const AdvancedTriggersOptions = ({
   symbol,
+  stopLossOrder,
+  takeProfitOrder,
   stepSizeDecimals,
   tickSizeDecimals,
   className,
@@ -37,8 +43,8 @@ export const AdvancedTriggersOptions = ({
       </Styled.Header>
       {/* TODO: CT-625 Update with values from abacus */}
       <Styled.Content>
-        <OrderSizeInput className={className} symbol={symbol} stepSizeDecimals={stepSizeDecimals} />
-        <LimitPriceInputs className={className} tickSizeDecimals={tickSizeDecimals} />
+        <OrderSizeInput className={className} symbol={symbol} stepSizeDecimals={stepSizeDecimals} stopLossOrder={stopLossOrder} takeProfitOrder={takeProfitOrder}/>
+        <LimitPriceInputs className={className} tickSizeDecimals={tickSizeDecimals} stopLossOrder={stopLossOrder} takeProfitOrder={takeProfitOrder}/>
       </Styled.Content>
     </Styled.Container>
   );
