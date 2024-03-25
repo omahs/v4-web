@@ -164,7 +164,7 @@ export const TriggerOrdersInputField =
   Abacus.exchange.dydx.abacus.state.model.TriggerOrdersInputField;
 const triggerOrdersInputFields = [...TriggerOrdersInputField.values()] as const;
 export type TriggerOrdersInputFields = (typeof triggerOrdersInputFields)[number];
-export type TriggerOrdersInputPrice = Abacus.exchange.dydx.abacus.output.input.TriggerOrdersInputPrice;
+export type TriggerOrdersInputPrice = Abacus.exchange.dydx.abacus.output.input.TriggerPrice;
 export type TriggerOrder = Abacus.exchange.dydx.abacus.output.input.TriggerOrder;
 
 // ------ Trade Items ------ //

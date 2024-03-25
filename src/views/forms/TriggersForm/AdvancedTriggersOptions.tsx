@@ -1,5 +1,7 @@
 import styled, { AnyStyledComponent } from 'styled-components';
 
+import { TriggerOrder } from '@/constants/abacus';
+import { Nullable } from '@/constants/abacus';
 import { STRING_KEYS } from '@/constants/localization';
 
 import { useStringGetter } from '@/hooks';
@@ -8,15 +10,13 @@ import { layoutMixins } from '@/styles/layoutMixins';
 
 import { HorizontalSeparatorFiller } from '@/components/Separator';
 
-import { TriggerOrder } from '@/constants/abacus';
-
 import { LimitPriceInputs } from './LimitPriceInputs';
 import { OrderSizeInput } from './OrderSizeInput';
 
 type ElementProps = {
   symbol: string;
-  stopLossOrder?: TriggerOrder;
-  takeProfitOrder?: TriggerOrder;
+  stopLossOrder?: Nullable<TriggerOrder>;
+  takeProfitOrder?: Nullable<TriggerOrder>;
   stepSizeDecimals?: number;
   tickSizeDecimals?: number;
 };
@@ -41,10 +41,20 @@ export const AdvancedTriggersOptions = ({
         {stringGetter({ key: STRING_KEYS.ADVANCED })}
         <HorizontalSeparatorFiller />
       </Styled.Header>
-      {/* TODO: CT-625 Update with values from abacus */}
       <Styled.Content>
-        <OrderSizeInput className={className} symbol={symbol} stepSizeDecimals={stepSizeDecimals} stopLossOrder={stopLossOrder} takeProfitOrder={takeProfitOrder}/>
-        <LimitPriceInputs className={className} tickSizeDecimals={tickSizeDecimals} stopLossOrder={stopLossOrder} takeProfitOrder={takeProfitOrder}/>
+        <OrderSizeInput
+          className={className}
+          symbol={symbol}
+          stepSizeDecimals={stepSizeDecimals}
+          stopLossOrder={stopLossOrder}
+          takeProfitOrder={takeProfitOrder}
+        />
+        <LimitPriceInputs
+          className={className}
+          tickSizeDecimals={tickSizeDecimals}
+          stopLossOrder={stopLossOrder}
+          takeProfitOrder={takeProfitOrder}
+        />
       </Styled.Content>
     </Styled.Container>
   );

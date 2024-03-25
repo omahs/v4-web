@@ -30,8 +30,8 @@ dependencies:
     specifier: ^0.32.1
     version: 0.32.2
   '@dydxprotocol/v4-abacus':
-    specifier: ^1.6.12
-    version: 1.6.12
+    specifier: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.6.15.tgz
+    version: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.6.15.tgz
   '@dydxprotocol/v4-client-js':
     specifier: ^1.0.25
     version: 1.0.26
@@ -1561,10 +1561,6 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
-
-  /@dydxprotocol/v4-abacus@1.6.12:
-    resolution: {integrity: sha512-sb9HODI0Sjk8WKXVK+1fWiWhWStII7DVDeDquE6xCqmJhViT/TpXUGF4DA4fkc56X2eGEpEgbz0uX+NW+lZD0Q==}
-    dev: false
 
   /@dydxprotocol/v4-client-js@1.0.26:
     resolution: {integrity: sha512-lsesLZo6Zxr6BMf+WQQpC8RNhtl6Va/Yp6SRdvCX0tqQ55+K2xLcYHLZ0py6EWwjsmnkoCTXYN6l4cIQFCvY4w==}
@@ -19304,8 +19300,8 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
 
-  file:../v4-abacus/build/packages/js/dydxprotocol-v4-abacus-1.6.14.tgz:
-    resolution: {integrity: sha512-QaucuE0EcLSAtho4Tpb7VBrzFM55gm9odcY3o9Bj8w0yUM+jnwI+ODPgZCga8sKk1lXEOZBwW7Zvw/yXX+upQw==, tarball: file:../v4-abacus/build/packages/js/dydxprotocol-v4-abacus-1.6.14.tgz}
+  file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.6.15.tgz:
+    resolution: {integrity: sha512-+L5uuSgnELhWEDMLzBUv0vEmkF6tSlfQFMc9wSUQNNBzLuIRx7oJOfBeQqtiVi52OOneY8L8UuY5lL7fkijJZQ==, tarball: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.6.15.tgz}
     name: '@dydxprotocol/v4-abacus'
-    version: 1.6.14
+    version: 1.6.15
     dev: false

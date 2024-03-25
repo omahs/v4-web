@@ -1,10 +1,12 @@
-import { shallowEqual, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+
+import { shallowEqual, useSelector } from 'react-redux';
 import styled, { type AnyStyledComponent } from 'styled-components';
 
 import { TriggerOrdersInputField, type SubaccountOrder } from '@/constants/abacus';
 import { ButtonAction } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
+import { TradeTypes } from '@/constants/trade';
 
 import { useStringGetter } from '@/hooks';
 
@@ -14,13 +16,12 @@ import { Button } from '@/components/Button';
 import { Output, OutputType } from '@/components/Output';
 
 import { getPositionDetails } from '@/state/accountSelectors';
+import { getTriggerOrdersInputs } from '@/state/inputsSelectors';
+
+import abacusStateManager from '@/lib/abacus';
 
 import { AdvancedTriggersOptions } from './AdvancedTriggersOptions';
 import { TriggerOrderInputs } from './TriggerOrderInputs';
-
-import abacusStateManager from '@/lib/abacus';
-import { getTriggerOrdersInputs } from '@/state/inputsSelectors';
-import { TradeTypes } from '@/constants/trade';
 
 type ElementProps = {
   marketId: string;
@@ -40,7 +41,8 @@ export const TriggersForm = ({
   const { asset, entryPrice, stepSizeDecimals, tickSizeDecimals, oraclePrice } =
     useSelector(getPositionDetails(marketId)) || {};
 
-  const { stopLossOrder, takeProfitOrder } = useSelector(getTriggerOrdersInputs, shallowEqual) || {};
+  const { stopLossOrder, takeProfitOrder } =
+    useSelector(getTriggerOrdersInputs, shallowEqual) || {};
 
   const symbol = asset?.id ?? '';
 
@@ -48,46 +50,49 @@ export const TriggersForm = ({
   const isEditingExistingTriggers = stopLossOrders.length > 0 || takeProfitOrders.length > 0;
 
   useEffect(() => {
+    abacusStateManager.setTriggerOrdersValue({
+      field: TriggerOrdersInputField.marketId,
+      value: marketId,
+    });
+
     if (stopLossOrders.length == 1) {
-      const {size, triggerPrice, price, type} = stopLossOrders[0];
+      const { size, triggerPrice, price, type } = stopLossOrders[0];
       abacusStateManager.setTriggerOrdersValue({
         field: TriggerOrdersInputField.size,
-        value: size
-      })
+        value: size,
+      });
       abacusStateManager.setTriggerOrdersValue({
         field: TriggerOrdersInputField.stopLossPrice,
-        value: triggerPrice
-      })
+        value: triggerPrice,
+      });
       abacusStateManager.setTriggerOrdersValue({
         field: TriggerOrdersInputField.stopLossLimitPrice,
-        value: price
-      })
+        value: price,
+      });
       abacusStateManager.setTriggerOrdersValue({
         field: TriggerOrdersInputField.stopLossOrderType,
-        value: type.rawValue
-      })
-      console.log("Xcxc size", size)
+        value: type.rawValue,
+      });
       // xcxc we don't set percent here, we calculate it in abacus based on stop loss limit and return it?
     }
     if (takeProfitOrders.length == 1) {
-      const {size, triggerPrice, price, type} = takeProfitOrders[0];
+      const { size, triggerPrice, price, type } = takeProfitOrders[0];
       abacusStateManager.setTriggerOrdersValue({
         field: TriggerOrdersInputField.size,
-        value: size
-      })
+        value: size,
+      });
       abacusStateManager.setTriggerOrdersValue({
         field: TriggerOrdersInputField.takeProfitPrice,
-        value: triggerPrice
-      })
+        value: triggerPrice,
+      });
       abacusStateManager.setTriggerOrdersValue({
         field: TriggerOrdersInputField.takeProfitLimitPrice,
-        value: price
-      })
+        value: price,
+      });
       abacusStateManager.setTriggerOrdersValue({
         field: TriggerOrdersInputField.takeProfitOrderType,
-        value: type.rawValue
-      })
-      console.log("Xcxc size", size)
+        value: type.rawValue,
+      });
       // xcxc we don't set percent here, we calculate it in abacus based on stop loss limit and return it?
     }
   }, []);
@@ -111,6 +116,48 @@ export const TriggersForm = ({
     </Styled.PriceBox>
   );
 
+  const onStopLossTriggerPriceChange = (value: string | null) => {
+    abacusStateManager.setTriggerOrdersValue({
+      value,
+      field: TriggerOrdersInputField.stopLossPrice,
+    });
+  };
+
+  const onTakeProfitTriggerPriceChange = (value: string | null) => {
+    abacusStateManager.setTriggerOrdersValue({
+      value,
+      field: TriggerOrdersInputField.takeProfitPrice,
+    });
+  };
+
+  const onStopLossTriggerPercentChange = (value: string | null) => {
+    abacusStateManager.setTriggerOrdersValue({
+      value,
+      field: TriggerOrdersInputField.stopLossPercentDiff,
+    });
+  };
+
+  const onTakeProfitTriggerPercentChange = (value: string | null) => {
+    abacusStateManager.setTriggerOrdersValue({
+      value,
+      field: TriggerOrdersInputField.takeProfitPercentDiff,
+    });
+  };
+
+  const onStopLossTriggerUsdcChange = (value: string | null) => {
+    abacusStateManager.setTriggerOrdersValue({
+      value,
+      field: TriggerOrdersInputField.stopLossUsdcDiff,
+    });
+  };
+
+  const onTakeProfitTriggerUsdcChange = (value: string | null) => {
+    abacusStateManager.setTriggerOrdersValue({
+      value,
+      field: TriggerOrdersInputField.takeProfitUsdcDiff,
+    });
+  };
+
   return (
     <Styled.Form>
       {priceInfo}
@@ -125,6 +172,9 @@ export const TriggersForm = ({
         // orders={takeProfitOrders}
         tickSizeDecimals={tickSizeDecimals}
         onViewOrdersClick={onViewOrdersClick}
+        onTriggerPriceChange={onTakeProfitTriggerPriceChange}
+        onPercentDiffChange={onTakeProfitTriggerPercentChange}
+        onUsdcDiffChange={onTakeProfitTriggerUsdcChange}
         isMultiple={takeProfitOrders.length > 1}
         price={takeProfitOrder?.price}
       />
@@ -139,6 +189,9 @@ export const TriggersForm = ({
         // orders={stopLossOrders}
         tickSizeDecimals={tickSizeDecimals}
         onViewOrdersClick={onViewOrdersClick}
+        onTriggerPriceChange={onStopLossTriggerPriceChange}
+        onPercentDiffChange={onStopLossTriggerPercentChange}
+        onUsdcDiffChange={onStopLossTriggerUsdcChange}
         isMultiple={stopLossOrders.length > 1}
         price={stopLossOrder?.price}
       />
@@ -146,7 +199,7 @@ export const TriggersForm = ({
         <>
           <AdvancedTriggersOptions
             symbol={symbol}
-            stopLossOrder={stopLossOrder} // xcxc can clean up
+            stopLossOrder={stopLossOrder}
             takeProfitOrder={takeProfitOrder}
             stepSizeDecimals={stepSizeDecimals}
             tickSizeDecimals={tickSizeDecimals}

@@ -173,22 +173,34 @@ class AbacusStateManager {
   };
 
   clearTriggerOrdersInputValues = () => {
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.size })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.size });
 
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossOrderType })
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossPrice })
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossLimitPrice })
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossPercentDiff })
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossUsdcDiff })
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossPriceDiffInput })
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossOrderType });
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossPrice });
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossLimitPrice });
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossPercentDiff });
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossUsdcDiff });
+    this.setTriggerOrdersValue({
+      value: null,
+      field: TriggerOrdersInputField.stopLossPriceDiffInput,
+    });
 
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitOrderType })
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitPrice })
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitLimitPrice })
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitPercentDiff })
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitUsdcDiff })
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitPriceDiffInput })
-  }
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitOrderType });
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitPrice });
+    this.setTriggerOrdersValue({
+      value: null,
+      field: TriggerOrdersInputField.takeProfitLimitPrice,
+    });
+    this.setTriggerOrdersValue({
+      value: null,
+      field: TriggerOrdersInputField.takeProfitPercentDiff,
+    });
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitUsdcDiff });
+    this.setTriggerOrdersValue({
+      value: null,
+      field: TriggerOrdersInputField.takeProfitPriceDiffInput,
+    });
+  };
 
   resetInputState = () => {
     this.clearTransferInputValues();
@@ -241,10 +253,9 @@ class AbacusStateManager {
     this.stateManager.transfer(value, field);
   };
 
-  setTriggerOrdersValue = ({ value, field} : {value: any, field: TriggerOrdersInputFields }) => {
-    console.log("Xcxc setting trigger orders field ", field, " to value ", value)
+  setTriggerOrdersValue = ({ value, field }: { value: any; field: TriggerOrdersInputFields }) => {
     this.stateManager.triggerOrders(value, field);
-  }
+  };
 
   setHistoricalPnlPeriod = (
     period: (typeof HistoricalPnlPeriod)[keyof typeof HistoricalPnlPeriod]

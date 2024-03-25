@@ -1,8 +1,16 @@
 import { useState } from 'react';
 
+import { NumberFormatValues } from 'react-number-format';
 import styled, { AnyStyledComponent } from 'styled-components';
 
-import { type TriggerOrdersInputPrice, type TriggerOrder, Nullable, type SubaccountOrder, TriggerOrdersInputs } from '@/constants/abacus';
+import {
+  type TriggerOrdersInputPrice,
+  type TriggerOrder,
+  Nullable,
+  type SubaccountOrder,
+  TriggerOrdersInputs,
+  TriggerOrdersInputField,
+} from '@/constants/abacus';
 import { ButtonAction } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
 import { PERCENT_DECIMALS, USD_DECIMALS } from '@/constants/numbers';
@@ -19,6 +27,8 @@ import { InputType } from '@/components/Input';
 import { Tag } from '@/components/Tag';
 import { WithTooltip } from '@/components/WithTooltip';
 
+import { MustBigNumber } from '@/lib/numbers';
+
 type InputChangeType = InputType.Currency | InputType.Percent;
 
 type ElementProps = {
@@ -32,6 +42,11 @@ type ElementProps = {
   // orders: SubaccountOrder[];
   tickSizeDecimals?: number;
   onViewOrdersClick: () => void;
+
+  onTriggerPriceChange: (value: string | null) => void;
+  onPercentDiffChange: (value: string | null) => void;
+  onUsdcDiffChange: (value: string | null) => void;
+
   isMultiple: boolean;
   price?: Nullable<TriggerOrdersInputPrice>;
 };
@@ -43,14 +58,52 @@ export const TriggerOrderInputs = ({
   // orders,
   tickSizeDecimals,
   onViewOrdersClick,
+  onTriggerPriceChange,
+  onPercentDiffChange,
+  onUsdcDiffChange,
   isMultiple,
   price,
 }: ElementProps) => {
   const stringGetter = useStringGetter();
 
-  const { triggerPrice, triggerPriceDiff } = price ?? {};
+  const { triggerPrice, percentDiff, usdcDiff, input } = price ?? {};
+
+  const formattedPercentDiff = percentDiff ? MustBigNumber(percentDiff).times(100) : null;
 
   const [inputType, setInputType] = useState<InputChangeType>(InputType.Percent);
+
+  const onTriggerPriceInput = ({
+    floatValue,
+    formattedValue,
+  }: {
+    floatValue?: number;
+    formattedValue: string;
+  }) => {
+    const newAmount = MustBigNumber(floatValue).toFixed(tickSizeDecimals ?? USD_DECIMALS); //xcxc
+    onTriggerPriceChange(formattedValue === '' || newAmount === 'NaN' ? null : newAmount);
+  };
+
+  const onPercentageInput = ({
+    floatValue,
+    formattedValue,
+  }: {
+    floatValue?: number;
+    formattedValue: string;
+  }) => {
+    const newAmount = MustBigNumber(floatValue).div(100).toFixed(PERCENT_DECIMALS);
+    onPercentDiffChange(formattedValue === '' || newAmount === 'NaN' ? null : newAmount);
+  };
+
+  const onUsdcInput = ({
+    floatValue,
+    formattedValue,
+  }: {
+    floatValue?: number;
+    formattedValue: string;
+  }) => {
+    const newAmount = MustBigNumber(floatValue).toFixed(tickSizeDecimals ?? USD_DECIMALS);
+    onUsdcDiffChange(formattedValue === '' || newAmount === 'NaN' ? null : newAmount);
+  };
 
   const getDecimalsForInputType = (inputType: InputChangeType) => {
     switch (inputType) {
@@ -117,13 +170,18 @@ export const TriggerOrderInputs = ({
               type={InputType.Currency}
               decimals={tickSizeDecimals}
               value={triggerPrice ?? null}
+              onInput={onTriggerPriceInput}
             />
             <FormInput
               id={`${tooltipId}-priceDiff`}
               label={stringGetter({ key: stringKeys.output })}
               decimals={getDecimalsForInputType(inputType)}
-              type={InputType.Number}
-              value={inputType === InputType.Percent ? triggerPriceDiff?.percent : triggerPriceDiff?.usdc}
+              type={inputType}
+              value={inputType === InputType.Percent ? formattedPercentDiff : usdcDiff}
+              onInput={inputType === InputType.Percent ? onPercentageInput : onUsdcInput}
+              // onChange={({ floatValue }: NumberFormatValues) => onPercentDiffChange(floatValue)}
+
+              // onChange={inputType === InputType.Percent ? ({ floatValue }: NumberFormatValues) => onPercentDiffChange(floatValue) : ({ floatValue }: NumberFormatValues) => onUsdcDiffChange(floatValue)}
               slotRight={priceDiffSelector({
                 value: inputType,
                 onValueChange: (value: InputChangeType) => setInputType(value),

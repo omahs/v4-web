@@ -44,8 +44,6 @@ export const inputsSlice = createSlice({
       const { current, errors, trade, closePosition, transfer, triggerOrders } =
         action.payload || {};
 
-      console.log('xcxc', action.payload);
-
       return {
         ...state,
         current: current?.rawValue,

@@ -33,6 +33,7 @@ import { TagSize } from '@/components/Tag';
 import { calculateIsAccountViewOnly } from '@/state/accountCalculators';
 import { getExistingOpenPositions, getSubaccountOpenOrders } from '@/state/accountSelectors';
 import { getAssets } from '@/state/assetsSelectors';
+import { getInputClosePositionData, getTriggerOrdersInputs } from '@/state/inputsSelectors';
 import { getPerpetualMarkets } from '@/state/perpetualsSelectors';
 
 import { MustBigNumber } from '@/lib/numbers';
@@ -41,7 +42,6 @@ import { isStopLossOrder, isTakeProfitOrder } from '@/lib/orders';
 import { PositionsActionsCell } from './PositionsTable/PositionsActionsCell';
 import { PositionsMarginCell } from './PositionsTable/PositionsMarginCell';
 import { PositionsTriggersCell } from './PositionsTable/PositionsTriggersCell';
-import { getInputClosePositionData, getTriggerOrdersInputs } from '@/state/inputsSelectors';
 
 export enum PositionsTableColumnKey {
   Details = 'Details',
@@ -362,8 +362,6 @@ export const PositionsTable = ({
   const openOrders = useSelector(getSubaccountOpenOrders, shallowEqual) || [];
   const triggerOrdersData = useSelector(getTriggerOrdersInputs, shallowEqual) || [];
 
-  console.log("xcxc triggerorderdata", triggerOrdersData)
-
   const stopLossOrders: SubaccountOrder[] = [];
   const takeProfitOrders: SubaccountOrder[] = [];
 
@@ -383,8 +381,6 @@ export const PositionsTable = ({
     takeProfitOrders: takeProfitOrders.filter((order) => order.marketId === position.id),
     ...position,
   }));
-
-
 
   return (
     <Styled.Table
