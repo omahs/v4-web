@@ -12,6 +12,7 @@ import type {
   TransferInputFields,
   HistoricalPnlPeriods,
   ParsingError,
+  HumanReadableTriggerOrdersPayload,
 } from '@/constants/abacus';
 import {
   AsyncAbacusStateManager,
@@ -33,7 +34,7 @@ import { CURRENT_ABACUS_DEPLOYMENT, type DydxNetwork, isMainnet } from '@/consta
 import { CLEARED_SIZE_INPUTS, CLEARED_TRADE_INPUTS } from '@/constants/trade';
 
 import type { RootStore } from '@/state/_store';
-import { setTradeFormInputs } from '@/state/inputs';
+import { CLEARED_TRIGGERS_FORM_INPUTS, setTradeFormInputs, setTriggersFormInputs } from '@/state/inputs';
 import { getInputTradeOptions, getTransferInputs } from '@/state/inputsSelectors';
 
 import { LocaleSeparators } from '../numbers';
@@ -175,17 +176,14 @@ class AbacusStateManager {
   clearTriggerOrdersInputValues = () => {
     this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.size });
 
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossOrderType });
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossOrderId });
     this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossPrice });
     this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossLimitPrice });
     this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossPercentDiff });
     this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.stopLossUsdcDiff });
-    this.setTriggerOrdersValue({
-      value: null,
-      field: TriggerOrdersInputField.stopLossPriceDiffInput,
-    });
+    // xcxc do we need to clear the type of order?
 
-    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitOrderType });
+    this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitOrderId });
     this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitPrice });
     this.setTriggerOrdersValue({
       value: null,
@@ -196,10 +194,9 @@ class AbacusStateManager {
       field: TriggerOrdersInputField.takeProfitPercentDiff,
     });
     this.setTriggerOrdersValue({ value: null, field: TriggerOrdersInputField.takeProfitUsdcDiff });
-    this.setTriggerOrdersValue({
-      value: null,
-      field: TriggerOrdersInputField.takeProfitPriceDiffInput,
-    });
+    // xcxc do we need to clear the type of order?
+
+    this.store?.dispatch(setTriggersFormInputs(CLEARED_TRIGGERS_FORM_INPUTS));
   };
 
   resetInputState = () => {
@@ -209,7 +206,7 @@ class AbacusStateManager {
       value: null,
     });
     this.clearTradeInputValues();
-    this.clearTriggerOrdersInputValues();
+    this.clearTriggerOrdersInputValues(); // xcxc do we need to clear here?
   };
 
   // ------ Set Data ------ //
@@ -314,6 +311,14 @@ class AbacusStateManager {
       data: Nullable<HumanReadableCancelOrderPayload>
     ) => void
   ) => this.stateManager.cancelOrder(orderId, callback);
+
+  triggerOrders = (
+    callback: (
+      success: boolean,
+      parsingError: Nullable<ParsingError>,
+      data: Nullable<HumanReadablePlaceOrderPayload[]>
+    ) => void
+  ): Nullable<HumanReadableTriggerOrdersPayload> => this.stateManager.commitTriggerOrders(callback);
 
   cctpWithdraw = (
     callback: (success: boolean, parsingError: Nullable<ParsingError>, data: string) => void

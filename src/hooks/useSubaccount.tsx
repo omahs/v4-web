@@ -414,6 +414,34 @@ export const useSubaccountContext = ({ localDydxWallet }: { localDydxWallet?: Lo
     [subaccountClient]
   );
 
+  const submitTriggerOrders = useCallback(
+    async ({
+      onError,
+      onSuccess,
+    }: {
+      onError?: ({ errorStringKey }?: { errorStringKey?: Nullable<string> }) => void;
+      onSuccess?: (placeOrderPayload: Nullable<HumanReadablePlaceOrderPayload[]>) => void;
+    }) => {
+      const callback = (
+        success: boolean,
+        parsingError?: Nullable<ParsingError>,
+        data?: Nullable<HumanReadablePlaceOrderPayload[]>
+      ) => {
+        console.log('Xcxc blah');
+
+        if (success) {
+          onSuccess?.(data);
+          console.log('Xcxc success triggering orders');
+        } else {
+          onError?.({ errorStringKey: parsingError?.stringKey });
+        }
+      };
+      const triggerOrderParams = abacusStateManager.triggerOrders(callback);
+      return triggerOrderParams;
+    },
+    [subaccountClient]
+  );
+
   const { newMarketProposal } = useGovernanceVariables();
 
   // ------ Governance Methods ------ //
@@ -454,6 +482,7 @@ export const useSubaccountContext = ({ localDydxWallet }: { localDydxWallet?: Lo
     placeOrder,
     closePosition,
     cancelOrder,
+    submitTriggerOrders,
 
     // Governance Methods
     submitNewMarketProposal,

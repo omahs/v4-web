@@ -12,7 +12,12 @@ import type {
 } from '@/constants/abacus';
 import { CLEARED_SIZE_INPUTS, CLEARED_TRADE_INPUTS } from '@/constants/trade';
 
+export const CLEARED_TRIGGERS_FORM_INPUTS = {
+  size: '',
+};
+
 type TradeFormInputs = typeof CLEARED_TRADE_INPUTS & typeof CLEARED_SIZE_INPUTS;
+type TriggersFormInputs = typeof CLEARED_TRIGGERS_FORM_INPUTS;
 
 export interface InputsState {
   current?: Nullable<string>;
@@ -20,7 +25,8 @@ export interface InputsState {
   tradeFormInputs: TradeFormInputs;
   tradeInputs?: Nullable<TradeInputs>;
   closePositionInputs?: Nullable<ClosePositionInputs>;
-  triggerInputs: Nullable<TriggerOrdersInputs>;
+  triggersFormInputs: TriggersFormInputs;
+  triggerOrdersInputs?: Nullable<TriggerOrdersInputs>;
   transferInputs?: Nullable<TransferInputs>;
 }
 
@@ -33,7 +39,10 @@ const initialState: InputsState = {
   },
   tradeInputs: undefined,
   transferInputs: undefined,
-  triggerInputs: undefined,
+  triggersFormInputs: {
+    ...CLEARED_TRIGGERS_FORM_INPUTS,
+  },
+  triggerOrdersInputs: undefined,
 };
 
 export const inputsSlice = createSlice({
@@ -49,7 +58,7 @@ export const inputsSlice = createSlice({
         current: current?.rawValue,
         inputErrors: errors?.toArray(),
         tradeInputs: trade,
-        triggerInputs: triggerOrders,
+        triggerOrdersInputs: triggerOrders,
         closePositionInputs: closePosition,
         transferInputs: {
           ...transfer,
@@ -61,7 +70,11 @@ export const inputsSlice = createSlice({
     setTradeFormInputs: (state, action: PayloadAction<Partial<TradeFormInputs>>) => {
       state.tradeFormInputs = assign({}, state.tradeFormInputs, action.payload);
     },
+
+    setTriggersFormInputs: (state, action: PayloadAction<Partial<TriggersFormInputs>>) => {
+      state.triggersFormInputs = assign({}, state.triggersFormInputs, action.payload);
+    },
   },
 });
 
-export const { setInputs, setTradeFormInputs } = inputsSlice.actions;
+export const { setInputs, setTradeFormInputs, setTriggersFormInputs } = inputsSlice.actions;

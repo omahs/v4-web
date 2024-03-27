@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 
+import { shallowEqual, useSelector } from 'react-redux';
 import styled, { AnyStyledComponent } from 'styled-components';
 
-import { Nullable } from '@/constants/abacus';
-import { TriggerOrder } from '@/constants/abacus';
+import {
+  AbacusOrderType,
+  TriggerOrdersInputField,
+  TriggerOrdersInputFields,
+} from '@/constants/abacus';
 import { STRING_KEYS } from '@/constants/localization';
 import { USD_DECIMALS } from '@/constants/numbers';
 
@@ -17,12 +21,16 @@ import { FormInput } from '@/components/FormInput';
 import { Tag } from '@/components/Tag';
 import { WithTooltip } from '@/components/WithTooltip';
 
+import { getTriggerOrdersInputs } from '@/state/inputsSelectors';
+
+import abacusStateManager from '@/lib/abacus';
+import { MustBigNumber } from '@/lib/numbers';
 import { isConditionalLimitOrderType } from '@/lib/orders';
 
 type ElementProps = {
-  stopLossOrder?: Nullable<TriggerOrder>;
-  takeProfitOrder?: Nullable<TriggerOrder>;
   tickSizeDecimals?: number;
+  multipleTakeProfitOrders: boolean;
+  multipleStopLossOrders: boolean;
 };
 
 type StyleProps = {
@@ -30,12 +38,15 @@ type StyleProps = {
 };
 
 export const LimitPriceInputs = ({
-  stopLossOrder,
-  takeProfitOrder,
   tickSizeDecimals,
+  multipleTakeProfitOrders, // xcxc maybe pull this up into state
+  multipleStopLossOrders,
   className,
 }: ElementProps & StyleProps) => {
   const stringGetter = useStringGetter();
+
+  const { stopLossOrder, takeProfitOrder } =
+    useSelector(getTriggerOrdersInputs, shallowEqual) || {};
 
   const [shouldShowLimitPrice, setShouldShowLimitPrice] = useState(false);
 
@@ -46,22 +57,50 @@ export const LimitPriceInputs = ({
         isConditionalLimitOrderType(takeProfitOrder?.type || undefined)
       )
     );
-  }, [stopLossOrder, takeProfitOrder]); // xcxc this might break if you're updating the order type
+  }, []); 
 
-  const onCheckLimit = (checked: boolean) => {
-    if (!checked) {
-      // should signify it is a market order now
+  const onCheckLimit = (newChecked: boolean) => {
+    if (!newChecked) {
+      abacusStateManager.setTriggerOrdersValue({
+        value: AbacusOrderType.takeProfitMarket.rawValue,
+        field: TriggerOrdersInputField.takeProfitOrderType,
+      });
+      abacusStateManager.setTriggerOrdersValue({
+        value: null,
+        field: TriggerOrdersInputField.takeProfitLimitPrice,
+      });
+      abacusStateManager.setTriggerOrdersValue({
+        value: AbacusOrderType.stopMarket.rawValue,
+        field: TriggerOrdersInputField.stopLossOrderType,
+      });
+      abacusStateManager.setTriggerOrdersValue({
+        value: null,
+        field: TriggerOrdersInputField.stopLossLimitPrice,
+      });
     }
-    setShouldShowLimitPrice(checked);
+    // we don't want to update types here if checked, not until they type
+    setShouldShowLimitPrice(newChecked);
   };
+
+  const onLimitInput =
+    (field: TriggerOrdersInputFields) =>
+    ({ floatValue, formattedValue }: { floatValue?: number; formattedValue: string }) => {
+      const newLimitPrice = MustBigNumber(floatValue);
+
+      abacusStateManager.setTriggerOrdersValue({
+        value:
+          formattedValue === '' || newLimitPrice === 'NaN'
+            ? null
+            : newLimitPrice.toFixed(tickSizeDecimals),
+        field,
+      });
+    };
 
   return (
     <>
       <Collapsible
         className={className}
-        slotTrigger={
-          <Checkbox checked={shouldShowLimitPrice} onCheckedChange={setShouldShowLimitPrice} />
-        }
+        slotTrigger={<Checkbox checked={shouldShowLimitPrice} onCheckedChange={onCheckLimit} />}
         open={shouldShowLimitPrice}
         label={
           <WithTooltip tooltip="limit-price">
@@ -71,36 +110,42 @@ export const LimitPriceInputs = ({
       >
         {
           <Styled.InputsRow>
-            <FormInput
-              id="TP-limit"
-              decimals={tickSizeDecimals ?? USD_DECIMALS}
-              value={
-                isConditionalLimitOrderType(takeProfitOrder?.type)
-                  ? takeProfitOrder?.price?.limitPrice
-                  : null
-              }
-              label={
-                <>
-                  {stringGetter({ key: STRING_KEYS.TP_LIMIT })}
-                  <Tag>USD</Tag>
-                </>
-              }
-            />
-            <FormInput
-              id="SL-limit"
-              decimals={tickSizeDecimals ?? USD_DECIMALS}
-              value={
-                isConditionalLimitOrderType(stopLossOrder?.type)
-                  ? stopLossOrder?.price?.limitPrice
-                  : null
-              }
-              label={
-                <>
-                  {stringGetter({ key: STRING_KEYS.SL_LIMIT })}
-                  <Tag>USD</Tag>
-                </>
-              }
-            />
+            {!multipleTakeProfitOrders && (
+              <FormInput
+                id="TP-limit"
+                decimals={tickSizeDecimals ?? USD_DECIMALS}
+                value={
+                  isConditionalLimitOrderType(takeProfitOrder?.type)
+                    ? takeProfitOrder?.price?.limitPrice
+                    : null
+                }
+                label={
+                  <>
+                    {stringGetter({ key: STRING_KEYS.TP_LIMIT })}
+                    <Tag>USD</Tag>
+                  </>
+                }
+                onInput={onLimitInput(TriggerOrdersInputField.takeProfitLimitPrice)}
+              />
+            )}
+            {!multipleStopLossOrders && (
+              <FormInput
+                id="SL-limit"
+                decimals={tickSizeDecimals ?? USD_DECIMALS}
+                value={
+                  isConditionalLimitOrderType(stopLossOrder?.type)
+                    ? stopLossOrder?.price?.limitPrice
+                    : null
+                }
+                label={
+                  <>
+                    {stringGetter({ key: STRING_KEYS.SL_LIMIT })}
+                    <Tag>USD</Tag>
+                  </>
+                }
+                onInput={onLimitInput(TriggerOrdersInputField.stopLossLimitPrice)}
+              />
+            )}
           </Styled.InputsRow>
         }
       </Collapsible>

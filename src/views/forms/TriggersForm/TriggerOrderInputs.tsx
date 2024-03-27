@@ -5,7 +5,7 @@ import styled, { AnyStyledComponent } from 'styled-components';
 
 import {
   type TriggerOrdersInputPrice,
-  type TriggerOrder,
+  type TriggerOrdersTriggerOrder,
   Nullable,
   type SubaccountOrder,
   TriggerOrdersInputs,
@@ -39,7 +39,6 @@ type ElementProps = {
     price: string;
     output: string;
   };
-  // orders: SubaccountOrder[];
   tickSizeDecimals?: number;
   onViewOrdersClick: () => void;
 
@@ -55,7 +54,6 @@ export const TriggerOrderInputs = ({
   symbol,
   tooltipId,
   stringKeys,
-  // orders,
   tickSizeDecimals,
   onViewOrdersClick,
   onTriggerPriceChange,
@@ -171,6 +169,7 @@ export const TriggerOrderInputs = ({
               decimals={tickSizeDecimals}
               value={triggerPrice ?? null}
               onInput={onTriggerPriceInput}
+              allowNegative={true}
             />
             <FormInput
               id={`${tooltipId}-priceDiff`}
@@ -179,6 +178,7 @@ export const TriggerOrderInputs = ({
               type={inputType}
               value={inputType === InputType.Percent ? formattedPercentDiff : usdcDiff}
               onInput={inputType === InputType.Percent ? onPercentageInput : onUsdcInput}
+              allowNegative={true}
               // onChange={({ floatValue }: NumberFormatValues) => onPercentDiffChange(floatValue)}
 
               // onChange={inputType === InputType.Percent ? ({ floatValue }: NumberFormatValues) => onPercentDiffChange(floatValue) : ({ floatValue }: NumberFormatValues) => onUsdcDiffChange(floatValue)}

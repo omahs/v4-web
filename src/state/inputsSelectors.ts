@@ -85,13 +85,41 @@ export const getTransferInputs = (state: RootState) => state.inputs.transferInpu
  * @param state
  * @returns TriggerOrdersInputs
  */
-export const getTriggerOrdersInputs = (state: RootState) => state.inputs.triggerInputs;
+export const getTriggerOrdersInputs = (state: RootState) => state.inputs.triggerOrdersInputs;
 
 /**
  * @param state
  * @returns ClosePositionInputs
  */
 export const getInputClosePositionData = (state: RootState) => state.inputs.closePositionInputs;
+
+/**
+ * @returns Data needed for the TriggersForm
+ */
+export const useTriggersFormData = () => {
+  return useSelector(
+    createSelector(
+      [getTriggerOrdersInputs, getTriggerOrdersInputErrors],
+      (triggerOrdersData, triggerOrdersErrors) => {
+        const { marketId, size, stopLossOrder, takeProfitOrder } = triggerOrdersData || {};
+        return {
+          marketId,
+          size,
+          stopLossOrder,
+          takeProfitOrder,
+
+          triggerOrdersErrors,
+        };
+      }
+    ),
+    shallowEqual
+  );
+};
+
+/**
+ * @returns TriggerOrdersForm Input states for display. Abacus inputs should track these values.
+ */
+export const getTriggersFormInputs = (state: RootState) => state.inputs.triggersFormInputs;
 
 /**
  * @returns Data needed for the TradeForm (price, size, summary, input render options, and errors/input validation)

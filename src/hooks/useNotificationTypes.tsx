@@ -62,6 +62,7 @@ export const notificationTypes: NotificationTypeConfig[] = [
       const abacusNotifications = useSelector(getAbacusNotifications, isEqual);
 
       useEffect(() => {
+        console.log('Xcxc abacus notifications', abacusNotifications);
         for (const abacusNotif of abacusNotifications) {
           const [abacusNotificationType = '', id = ''] = abacusNotif.id.split(':');
           const parsedData = abacusNotif.data ? JSON.parse(abacusNotif.data) : {};
@@ -73,7 +74,8 @@ export const notificationTypes: NotificationTypeConfig[] = [
           );
 
           switch (abacusNotificationType) {
-            case 'order': {
+            case 'orderstatus': {
+              console.log('Xcxc triggering order');
               trigger(
                 abacusNotif.id,
                 {
