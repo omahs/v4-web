@@ -3,7 +3,12 @@ import { useEffect, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import styled, { type AnyStyledComponent } from 'styled-components';
 
-import { TriggerOrdersInputField, type SubaccountOrder } from '@/constants/abacus';
+import {
+  TriggerOrdersInputField,
+  type SubaccountOrder,
+  ErrorType,
+  ValidationError,
+} from '@/constants/abacus';
 import { ButtonAction } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
 import { TradeTypes } from '@/constants/trade';
@@ -16,7 +21,7 @@ import { Button } from '@/components/Button';
 import { Output, OutputType } from '@/components/Output';
 
 import { getPositionDetails } from '@/state/accountSelectors';
-import { getTriggerOrdersInputs } from '@/state/inputsSelectors';
+import { getTriggerOrdersInputErrors, getTriggerOrdersInputs } from '@/state/inputsSelectors';
 
 import abacusStateManager from '@/lib/abacus';
 
@@ -43,6 +48,14 @@ export const TriggersForm = ({
 
   const { stopLossOrder, takeProfitOrder } =
     useSelector(getTriggerOrdersInputs, shallowEqual) || {};
+
+  const inputErrors = useSelector(getTriggerOrdersInputErrors, shallowEqual);
+
+  const hasInputErrors = inputErrors?.some(
+    (error: ValidationError) => error.type !== ErrorType.warning
+  );
+
+  console.log('xcxc', inputErrors);
 
   const symbol = asset?.id ?? '';
 
