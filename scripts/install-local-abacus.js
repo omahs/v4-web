@@ -1,10 +1,11 @@
 import { execSync } from 'child_process';
 
-console.log("Cleaning up any previously built abacus packages...")
+console.log("Cleaning...")
 try {
-    execSync('rm ../v4-abacus/build/packages/*.tgz', { stdio: "inherit" });   
+    execSync('pnpm remove @dydxprotocol/v4-abacus', { stdio: "inherit" });   
+    execSync('cd ../v4-abacus && ./gradlew clean', { stdio: "inherit" });   
 } catch (error) {
-    // Don't fail if we didn't find any previously built packages.
+    // Ignore failure - removal fail usually means package wasn't installed anyways.
 }
 
 console.log("Building abacus...")
@@ -31,5 +32,13 @@ try {
 } catch (error) {
     console.error('Error generating local-abacus-hash:', error);
     console.error('You may need to manually restart pnpm dev.')
+    process.exit(1); 
+}
+
+console.log("Starting continuous abacus build...")
+try {
+    execSync("cd ../v4-abacus && ./gradlew v4WebHotSwapTrigger --continuous", { stdio: "inherit" });
+} catch (error) {
+    console.error('Error from continuous abacus build:', error);
     process.exit(1); 
 }
