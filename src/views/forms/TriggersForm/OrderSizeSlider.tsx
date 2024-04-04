@@ -1,62 +1,26 @@
-import { useCallback } from 'react';
-
-import _ from 'lodash';
 import styled, { AnyStyledComponent } from 'styled-components';
 
 import { Slider } from '@/components/Slider';
 
 type ElementProps = {
-  setAbacusSize: (value: number | null) => void;
-  setOrderSizeInput: (value: number) => void;
-  size: number | null;
-  positionSize?: number;
+  stepSizeDecimals?: number;
 };
 
 type StyleProps = {
   className?: string;
 };
 
-export const OrderSizeSlider = ({
-  setOrderSizeInput,
-  setAbacusSize,
-  size,
-  positionSize,
-  className,
-}: ElementProps & StyleProps) => {
-  const step = positionSize ? Math.pow(10, Math.floor(Math.log10(positionSize) - 1)) : 0.1;
-  const maxSize = positionSize ?? 0;
-  const currSize = size ?? 0;
-
-  // Debounced slightly to avoid excessive updates to Abacus while still providing a smooth slide
-  const debouncedSetAbacusSize = useCallback(
-    _.debounce((newSize: number) => {
-      setAbacusSize(newSize);
-    }, 50),
-    []
-  );
-
-  const onSliderDrag = ([newSize]: number[]) => {
-    setOrderSizeInput(newSize);
-    debouncedSetAbacusSize(newSize);
-  };
-
-  const onValueCommit = ([newSize]: number[]) => {
-    setOrderSizeInput(newSize);
-    // Ensure Abacus is updated with the latest, committed value
-    debouncedSetAbacusSize.cancel();
-    setAbacusSize(newSize);
-  };
-
+export const OrderSizeSlider = ({ stepSizeDecimals, className }: ElementProps & StyleProps) => {
   return (
     <Styled.SliderContainer className={className}>
       <Styled.Slider
         label="PositionSize"
         min={0}
-        max={maxSize}
-        step={step}
-        onSliderDrag={onSliderDrag}
-        onValueCommit={onValueCommit}
-        value={Math.min(currSize, maxSize)}
+        max={100}
+        step={stepSizeDecimals}
+        onSliderDrag={() => null}
+        onValueCommit={() => null}
+        value={[50]} // TODO: CT-625 Update with values from abacus
       />
     </Styled.SliderContainer>
   );

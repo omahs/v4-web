@@ -15,12 +15,6 @@ import { OrderSizeInput } from './OrderSizeInput';
 
 type ElementProps = {
   symbol: string;
-  existsLimitOrder: boolean;
-  size: number | null;
-  positionSize: number | null;
-  differingOrderSizes: boolean;
-  multipleTakeProfitOrders: boolean;
-  multipleStopLossOrders: boolean;
   stepSizeDecimals?: number;
   tickSizeDecimals?: number;
 };
@@ -31,12 +25,6 @@ type StyleProps = {
 
 export const AdvancedTriggersOptions = ({
   symbol,
-  existsLimitOrder,
-  size,
-  positionSize,
-  differingOrderSizes,
-  multipleTakeProfitOrders,
-  multipleStopLossOrders,
   stepSizeDecimals,
   tickSizeDecimals,
   className,
@@ -49,23 +37,11 @@ export const AdvancedTriggersOptions = ({
         {stringGetter({ key: STRING_KEYS.ADVANCED })}
         <HorizontalSeparatorFiller />
       </Styled.Header>
+      {/* TODO: CT-625 Update with values from abacus */}
       <Styled.Content>
-        <OrderSizeInput
-          className={className}
-          differingOrderSizes={differingOrderSizes}
-          symbol={symbol}
-          size={size}
-          positionSize={positionSize}
-          stepSizeDecimals={stepSizeDecimals}
-        />
+        <OrderSizeInput className={className} symbol={symbol} stepSizeDecimals={stepSizeDecimals} />
         {testFlags.enableConditionalLimitOrders && (
-          <LimitPriceInputs
-            className={className}
-            existsLimitOrder={existsLimitOrder}
-            multipleTakeProfitOrders={multipleTakeProfitOrders}
-            multipleStopLossOrders={multipleStopLossOrders}
-            tickSizeDecimals={tickSizeDecimals}
-          />
+          <LimitPriceInputs className={className} tickSizeDecimals={tickSizeDecimals} />
         )}
       </Styled.Content>
     </Styled.Container>

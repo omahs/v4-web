@@ -59,12 +59,6 @@ export const getClosePositionInputErrors = (state: RootState) => {
 
 /**
  * @param state
- * @returns ClosePositionInputs
- */
-export const getInputClosePositionData = (state: RootState) => state.inputs.closePositionInputs;
-
-/**
- * @param state
  * @returns input errors for Transfer
  */
 export const getTransferInputErrors = (state: RootState) => {
@@ -80,18 +74,9 @@ export const getTransferInputs = (state: RootState) => state.inputs.transferInpu
 
 /**
  * @param state
- * @returns input errors for TriggerOrders
+ * @returns ClosePositionInputs
  */
-export const getTriggerOrdersInputErrors = (state: RootState) => {
-  const currentInput = state.inputs.current;
-  return currentInput === 'triggerOrders' ? getInputErrors(state) : [];
-};
-
-/**
- * @param state
- * @returns TriggerOrdersInputs
- */
-export const getTriggerOrdersInputs = (state: RootState) => state.inputs.triggerOrdersInputs;
+export const getInputClosePositionData = (state: RootState) => state.inputs.closePositionInputs;
 
 /**
  * @returns Data needed for the TradeForm (price, size, summary, input render options, and errors/input validation)

@@ -2,11 +2,7 @@ import { useState } from 'react';
 
 import styled, { AnyStyledComponent } from 'styled-components';
 
-import {
-  TriggerOrdersInputPrice,
-  type TriggerOrdersInputFields,
-  Nullable,
-} from '@/constants/abacus';
+import { type SubaccountOrder } from '@/constants/abacus';
 import { ButtonAction } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
 import { PERCENT_DECIMALS, USD_DECIMALS } from '@/constants/numbers';
@@ -23,16 +19,7 @@ import { InputType } from '@/components/Input';
 import { Tag } from '@/components/Tag';
 import { WithTooltip } from '@/components/WithTooltip';
 
-import abacusStateManager from '@/lib/abacus';
-import { MustBigNumber } from '@/lib/numbers';
-
 type InputChangeType = InputType.Currency | InputType.Percent;
-
-type InputOrderFields = {
-  triggerPriceField: TriggerOrdersInputFields;
-  percentDiffField: TriggerOrdersInputFields;
-  usdcDiffField: TriggerOrdersInputFields;
-};
 
 type ElementProps = {
   symbol: string;
@@ -42,9 +29,7 @@ type ElementProps = {
     price: string;
     output: string;
   };
-  inputOrderFields: InputOrderFields;
-  isMultiple: boolean;
-  price: Nullable<TriggerOrdersInputPrice>;
+  orders: SubaccountOrder[];
   tickSizeDecimals?: number;
   onViewOrdersClick: () => void;
 };
@@ -53,59 +38,13 @@ export const TriggerOrderInputs = ({
   symbol,
   tooltipId,
   stringKeys,
-  inputOrderFields,
-  isMultiple,
-  price,
+  orders,
   tickSizeDecimals,
   onViewOrdersClick,
 }: ElementProps) => {
   const stringGetter = useStringGetter();
 
-  const [inputType, setInputType] = useState<InputChangeType>(InputType.Currency);
-
-  const { triggerPrice, percentDiff, usdcDiff } = price ?? {};
-
-  const onTriggerPriceInput = ({
-    floatValue,
-    formattedValue,
-  }: {
-    floatValue?: number;
-    formattedValue: string;
-  }) => {
-    const newPrice = MustBigNumber(floatValue).toFixed(tickSizeDecimals ?? USD_DECIMALS);
-    abacusStateManager.setTriggerOrdersValue({
-      value: formattedValue === '' || newPrice === 'NaN' ? null : newPrice,
-      field: inputOrderFields.triggerPriceField,
-    });
-  };
-
-  const onPercentageDiffInput = ({
-    floatValue,
-    formattedValue,
-  }: {
-    floatValue?: number;
-    formattedValue: string;
-  }) => {
-    const newPercentage = MustBigNumber(floatValue).div(100).toFixed(PERCENT_DECIMALS);
-    abacusStateManager.setTriggerOrdersValue({
-      value: formattedValue === '' || newPercentage === 'NaN' ? null : newPercentage,
-      field: inputOrderFields.percentDiffField,
-    });
-  };
-
-  const onUsdcDiffInput = ({
-    floatValue,
-    formattedValue,
-  }: {
-    floatValue?: number;
-    formattedValue: string;
-  }) => {
-    const newAmount = MustBigNumber(floatValue).toFixed(tickSizeDecimals ?? USD_DECIMALS);
-    abacusStateManager.setTriggerOrdersValue({
-      value: formattedValue === '' || newAmount === 'NaN' ? null : newAmount,
-      field: inputOrderFields.usdcDiffField,
-    });
-  };
+  const [inputType, setInputType] = useState<InputChangeType>(InputType.Percent);
 
   const getDecimalsForInputType = (inputType: InputChangeType) => {
     switch (inputType) {
@@ -155,10 +94,11 @@ export const TriggerOrderInputs = ({
         <h3>{stringGetter({ key: stringKeys.header })}</h3>
       </WithTooltip>
       <Styled.InlineRow>
-        {isMultiple ? (
+        {orders.length > 1 ? (
           multipleOrdersButton()
         ) : (
           <>
+            {/* TODO: CT-625 Update with values from abacus */}
             <FormInput
               id={`${tooltipId}-price`}
               label={
@@ -168,29 +108,17 @@ export const TriggerOrderInputs = ({
               }
               type={InputType.Currency}
               decimals={tickSizeDecimals}
-              value={triggerPrice}
-              onInput={onTriggerPriceInput}
-              allowNegative={true}
+              value={orders.length === 1 ? orders[0].triggerPrice : null}
             />
             <FormInput
               id={`${tooltipId}-priceDiff`}
               label={stringGetter({ key: stringKeys.output })}
               decimals={getDecimalsForInputType(inputType)}
-              type={inputType}
-              // TODO: CT-694 re-enable when we determine a percentage diff calculation
-              // slotRight={priceDiffSelector({
-              //   value: inputType,
-              //   onValueChange: (value: InputChangeType) => setInputType(value),
-              // })}
-              value={
-                inputType === InputType.Percent
-                  ? percentDiff
-                    ? MustBigNumber(percentDiff).times(100).toFixed(PERCENT_DECIMALS)
-                    : null
-                  : usdcDiff
-              }
-              onInput={inputType === InputType.Percent ? onPercentageDiffInput : onUsdcDiffInput}
-              allowNegative={true}
+              type={InputType.Number}
+              slotRight={priceDiffSelector({
+                value: inputType,
+                onValueChange: (value: InputChangeType) => setInputType(value),
+              })}
             />
           </>
         )}

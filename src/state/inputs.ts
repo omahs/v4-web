@@ -8,7 +8,6 @@ import type {
   TradeInputs,
   ClosePositionInputs,
   TransferInputs,
-  TriggerOrdersInputs,
 } from '@/constants/abacus';
 import { CLEARED_SIZE_INPUTS, CLEARED_TRADE_INPUTS } from '@/constants/trade';
 
@@ -20,7 +19,6 @@ export interface InputsState {
   tradeFormInputs: TradeFormInputs;
   tradeInputs?: Nullable<TradeInputs>;
   closePositionInputs?: Nullable<ClosePositionInputs>;
-  triggerOrdersInputs?: Nullable<TriggerOrdersInputs>;
   transferInputs?: Nullable<TransferInputs>;
 }
 
@@ -40,8 +38,7 @@ export const inputsSlice = createSlice({
   initialState,
   reducers: {
     setInputs: (state, action: PayloadAction<Nullable<Inputs>>) => {
-      const { current, errors, trade, closePosition, transfer, triggerOrders } =
-        action.payload || {};
+      const { current, errors, trade, closePosition, transfer } = action.payload || {};
 
       return {
         ...state,
@@ -53,7 +50,6 @@ export const inputsSlice = createSlice({
           ...transfer,
           isCctp: !!transfer?.isCctp,
         } as Nullable<TransferInputs>,
-        triggerOrdersInputs: triggerOrders,
       };
     },
 
