@@ -24,7 +24,7 @@ import { ClobPair } from '@dydxprotocol/v4-proto/src/codegen/dydxprotocol/clob/c
 import {
   Perpetual,
   PerpetualMarketType,
-} from '@dydxprotocol/v4-proto/src/codegen/dydxprotocol/perpetuals/perpetual';
+} from '@dydxprotocol/v4-client-js/build/node_modules/@dydxprotocol/v4-proto/src/codegen/dydxprotocol/perpetuals/perpetual'
 import { MarketPrice } from '@dydxprotocol/v4-proto/src/codegen/dydxprotocol/prices/market_price';
 import Ajv from 'ajv';
 import axios from 'axios';
