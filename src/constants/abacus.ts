@@ -114,6 +114,8 @@ export type TransferInputTokenResource =
   Abacus.exchange.dydx.abacus.output.input.TransferInputTokenResource;
 export type TransferInputChainResource =
   Abacus.exchange.dydx.abacus.output.input.TransferInputChainResource;
+export type AdjustIsolatedMarginInputs =
+  Abacus.exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput;
 export type SelectionOption = Abacus.exchange.dydx.abacus.output.input.SelectionOption;
 export const ErrorType = Abacus.exchange.dydx.abacus.output.input.ErrorType;
 export const InputSelectionOption = Abacus.exchange.dydx.abacus.output.input.SelectionOption;
@@ -176,6 +178,11 @@ export const ClosePositionInputField =
 const closePositionInputFields = [...ClosePositionInputField.values()] as const;
 export type ClosePositionInputFields = (typeof closePositionInputFields)[number];
 
+export const AdjustIsolatedMarginInputField =
+  Abacus.exchange.dydx.abacus.state.model.AdjustIsolatedMarginInputField;
+const adjustIsolatedMarginInputFields = [...AdjustIsolatedMarginInputField.values()] as const;
+export type AdjustIsolatedMarginInputFields = (typeof adjustIsolatedMarginInputFields)[number];
+
 // ------ Trigger Order Items ------ //
 export const TriggerOrdersInputField =
   Abacus.exchange.dydx.abacus.state.model.TriggerOrdersInputField;
@@ -206,6 +213,8 @@ export type HumanReadableWithdrawPayload =
   Abacus.exchange.dydx.abacus.state.manager.HumanReadableWithdrawPayload;
 export type HumanReadableTransferPayload =
   Abacus.exchange.dydx.abacus.state.manager.HumanReadableTransferPayload;
+export type HumanReadableSubaccountTransferPayload =
+  Abacus.exchange.dydx.abacus.state.manager.HumanReadableSubaccountTransferPayload;
 
 // ------ Helpers ------ //
 export const AbacusHelper = Abacus.exchange.dydx.abacus.utils.AbacusHelper;

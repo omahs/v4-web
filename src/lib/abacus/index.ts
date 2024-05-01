@@ -9,9 +9,12 @@ import type {
   HumanReadableCancelOrderPayload,
   TradeInputFields,
   TransferInputFields,
+  HumanReadableTriggerOrdersPayload,
+  TriggerOrdersInputFields,
   HistoricalPnlPeriods,
   ParsingError,
-  HumanReadableTriggerOrdersPayload,
+  AdjustIsolatedMarginInputFields,
+  HumanReadableSubaccountTransferPayload,
 } from '@/constants/abacus';
 import {
   AsyncAbacusStateManager,
@@ -26,7 +29,6 @@ import {
   TransferType,
   AbacusAppConfig,
   ApiData,
-  type TriggerOrdersInputFields,
   TriggerOrdersInputField,
 } from '@/constants/abacus';
 import { DEFAULT_MARKETID } from '@/constants/markets';
@@ -256,6 +258,16 @@ class AbacusStateManager {
     this.stateManager.triggerOrders(value, field);
   };
 
+  setAdjustIsolatedMarginValue = ({
+    value,
+    field,
+  }: {
+    value: any;
+    field: AdjustIsolatedMarginInputFields;
+  }) => {
+    this.stateManager.adjustIsolatedMargin(value, field);
+  };
+
   setHistoricalPnlPeriod = (
     period: (typeof HistoricalPnlPeriod)[keyof typeof HistoricalPnlPeriod]
   ) => {
@@ -325,6 +337,11 @@ class AbacusStateManager {
   cctpWithdraw = (
     callback: (success: boolean, parsingError: Nullable<ParsingError>, data: string) => void
   ): void => this.stateManager.commitCCTPWithdraw(callback);
+
+  adjustIsolatedMargin = (
+    callback: (success: boolean, parsingError: Nullable<ParsingError>, data: string) => void
+  ): Nullable<HumanReadableSubaccountTransferPayload> =>
+    this.stateManager.commitAdjustIsolatedMargin(callback);
 
   // ------ Utils ------ //
   getHistoricalPnlPeriod = (): Nullable<HistoricalPnlPeriods> =>

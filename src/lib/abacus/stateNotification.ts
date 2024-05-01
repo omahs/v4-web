@@ -133,7 +133,10 @@ class AbacusStateNotifier implements AbacusStateNotificationProtocol {
         dispatch(setRestrictionType(updatedState.restriction));
       }
 
+      console.log('@@', changes);
+
       subaccountNumbers?.forEach((subaccountId: number) => {
+        console.log('@@', subaccountId);
         if (subaccountId !== null) {
           if (changes.has(Changes.subaccount)) {
             dispatch(setSubaccount(updatedState.subaccount(subaccountId)));

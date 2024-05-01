@@ -98,7 +98,7 @@ export const Dialog = ({
   return (
     <Root modal={showOverlay} open={isOpen} onOpenChange={setIsOpen}>
       {slotTrigger && <Trigger asChild>{slotTrigger}</Trigger>}
-      <DialogPortal withPortal={placement !== DialogPlacement.Inline} container={portalContainer}>
+      <DialogPortal withPortal={false} container={portalContainer}>
         {showOverlay && <Styled.Overlay />}
         <Styled.Container
           placement={placement}

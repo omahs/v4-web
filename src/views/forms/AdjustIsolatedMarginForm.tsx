@@ -1,9 +1,10 @@
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 
+import { type NumberFormatValues } from 'react-number-format';
 import { shallowEqual, useSelector } from 'react-redux';
 import styled, { AnyStyledComponent } from 'styled-components';
 
-import type { SubaccountPosition } from '@/constants/abacus';
+import { AdjustIsolatedMarginInputField, type SubaccountPosition } from '@/constants/abacus';
 import { AlertType } from '@/constants/alerts';
 import { ButtonAction, ButtonShape } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
@@ -25,8 +26,10 @@ import { ToggleGroup } from '@/components/ToggleGroup';
 import { WithDetailsReceipt } from '@/components/WithDetailsReceipt';
 
 import { getOpenPositionFromId, getSubaccount } from '@/state/accountSelectors';
+import { getAdjustIsolatedMarginInputs } from '@/state/inputsSelectors';
 import { getMarketConfig } from '@/state/perpetualsSelectors';
 
+import abacusStateManager from '@/lib/abacus';
 import { calculatePositionMargin } from '@/lib/tradeData';
 
 type ElementProps = {
@@ -54,11 +57,41 @@ export const AdjustIsolatedMarginForm = ({ marketId }: ElementProps) => {
   const marketConfig = useSelector(getMarketConfig(marketId));
   const { tickSizeDecimals } = marketConfig ?? {};
 
-  /**
-   * @todo: Replace with Abacus functionality
-   */
+  const { amount, summary, fee } = useSelector(getAdjustIsolatedMarginInputs, shallowEqual) ?? {};
+
+  useEffect(() => {
+    abacusStateManager.setAdjustIsolatedMarginValue({
+      value: marginAction,
+      field: AdjustIsolatedMarginInputField.type,
+    });
+
+    // Testing Purposes
+    abacusStateManager.setAdjustIsolatedMarginValue({
+      value: 128,
+      field: AdjustIsolatedMarginInputField.childSubaccountNumber,
+    });
+
+    return () => {
+      abacusStateManager.resetInputState();
+    };
+  }, []);
+
+  useEffect(() => {
+    abacusStateManager.setAdjustIsolatedMarginValue({
+      value: marginAction,
+      field: AdjustIsolatedMarginInputField.type,
+    });
+  }, [marginAction]);
+
   const [percent, setPercent] = useState('');
-  const [amount, setAmount] = useState('');
+
+  const onChangeAmount = (value?: number) => {
+    abacusStateManager.setAdjustIsolatedMarginValue({
+      value,
+      field: AdjustIsolatedMarginInputField.amount,
+    });
+  };
+
   const onSubmit = () => {};
 
   const positionMargin = {
@@ -95,7 +128,7 @@ export const AdjustIsolatedMarginForm = ({ marketId }: ElementProps) => {
           !!freeCollateral?.postOrder && freeCollateral?.current !== freeCollateral?.postOrder,
         value: freeCollateral?.current,
         newValue: freeCollateral?.postOrder,
-        type: OutputType.Number,
+        type: OutputType.Fiat,
       }),
       marginUsageDiffOutput: renderDiffOutput({
         withDiff: !!marginUsage?.postOrder && marginUsage?.current !== marginUsage?.postOrder,
@@ -234,7 +267,7 @@ export const AdjustIsolatedMarginForm = ({ marketId }: ElementProps) => {
           type={InputType.Currency}
           label={formConfig.formLabel}
           value={amount}
-          onChange={setAmount}
+          onChange={({ floatValue }: NumberFormatValues) => onChangeAmount(floatValue)}
         />
       </WithDetailsReceipt>
 
@@ -247,29 +280,25 @@ export const AdjustIsolatedMarginForm = ({ marketId }: ElementProps) => {
   );
 };
 
-const Styled: Record<string, AnyStyledComponent> = {};
-
-Styled.Form = styled.form`
-  ${formMixins.transfersForm}
-`;
-
-Styled.ToggleGroup = styled(ToggleGroup)`
-  ${formMixins.inputToggleGroup}
-`;
-
-Styled.GradientCard = styled(GradientCard)`
-  ${layoutMixins.spacedRow}
-  height: 4rem;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
-  align-items: center;
-`;
-
-Styled.Column = styled.div`
-  ${layoutMixins.column}
-  font: var(--font-small-medium);
-`;
-
-Styled.TertiarySpan = styled.span`
-  color: var(--color-text-0);
-`;
+const Styled = {
+  Form: styled.form`
+    ${formMixins.transfersForm}
+  `,
+  ToggleGroup: styled(ToggleGroup)`
+    ${formMixins.inputToggleGroup}
+  `,
+  GradientCard: styled(GradientCard)`
+    ${layoutMixins.spacedRow}
+    height: 4rem;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    align-items: center;
+  `,
+  Column: styled.div`
+    ${layoutMixins.column}
+    font: var(--font-small-medium);
+  `,
+  TertiarySpan: styled.span`
+    color: var(--color-text-0);
+  `,
+};
