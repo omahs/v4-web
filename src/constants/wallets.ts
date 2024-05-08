@@ -26,8 +26,6 @@ import {
 
 import { isMetaMask } from '@/lib/wallet/providers';
 
-import { DydxChainId, WALLETS_CONFIG_MAP } from './networks';
-
 // Wallet connection types
 
 export enum WalletConnectionType {
@@ -318,17 +316,17 @@ export const COSMOS_DERIVATION_PATH = "m/44'/118'/0'/0/0";
 /**
  * @description typed data to sign for dYdX Chain onboarding
  */
-export const getSignTypedData = (selectedDydxChainId: DydxChainId) =>
+export const getSignTypedData = () =>
   ({
     primaryType: 'dYdX',
     domain: {
-      name: WALLETS_CONFIG_MAP[selectedDydxChainId].signTypedDataDomainName,
+      name: 'dYdX Chain',
     },
     types: {
       dYdX: [{ name: 'action', type: 'string' }],
     },
     message: {
-      action: WALLETS_CONFIG_MAP[selectedDydxChainId].signTypedDataAction,
+      action: 'dYdX Chain Onboarding',
     },
   } as const);
 
