@@ -30,6 +30,7 @@
     "ladle-p": "ladle preview",
     "lint": "eslint --ext .ts,.tsx src/",
     "fix-lint": "eslint --fix --ext .ts,.tsx src/",
+    "release": "node scripts/generate-release.js",
     "tag": "node scripts/generate-tag.js",
     "test": "vitest run",
     "tsc": "tsc",

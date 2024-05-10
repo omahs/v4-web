@@ -1,38 +1,4 @@
-/* eslint-disable consistent-return */
-
-/* eslint-disable no-console */
-import chalk from 'chalk';
-import * as childProcess from 'child_process';
-import * as readLineSync from 'readline-sync';
-
-const releaseTypes = ['Major', 'Minor', 'Patch'];
-
-const COLORS = {
-  INFO: chalk.cyan,
-  ERR: chalk.red,
-};
-
-const INFO_HEADER = `${chalk.black(chalk.bgCyan('INFO:'))} `;
-const ERROR_HEADER = `${chalk.bgRed('Error:')} `;
-
-const info = (msg) => console.log(INFO_HEADER + COLORS.INFO(msg));
-const error = (msg) => console.log(ERROR_HEADER + COLORS.ERR(msg));
-
-const rl = {
-  keyInSelect: (opts, msg) => readLineSync.keyInSelect(opts, COLORS.INFO(msg)),
-  keyInYN: (msg) => readLineSync.keyInYN(COLORS.INFO(msg)),
-};
-
-const execSync = (cmd) => {
-  try {
-    return childProcess.execSync(cmd, {
-      encoding: 'utf-8',
-      stdio: 'pipe',
-    });
-  } catch (err) {
-    process.exit(1);
-  }
-};
+import { error, execSync, getLatestTag, info, releaseTypes, rl } from './utils.js';
 
 const getNewSemVerNumber = (semVerNumber, releaseType) => {
   const semVerNumberAsArray = semVerNumber.split('.');
@@ -45,7 +11,7 @@ const getNewSemVerNumber = (semVerNumber, releaseType) => {
 };
 
 const bumpSemVer = (releaseTypeIndex) => {
-  const currentVersion = execSync('git describe --tags $(git rev-list --tags --max-count=1)');
+  const currentVersion = getLatestTag();
 
   info('Current version is', currentVersion);
   const semVerNumber = currentVersion.split('v')[1];
@@ -73,9 +39,9 @@ const cutTagForSemVer = (newSemVerNumber) => {
 
 const ask = async () => {
   const releaseTypeIndex = rl.keyInSelect(releaseTypes, '\nWhat kind of release is this?');
-  if (!releaseTypes[releaseTypeIndex]) {
-    console.error('Error, please select 1, 2, or 3!');
-    process.exit(1);
+  if (releaseTypeIndex === -1) {
+    info('Exiting...');
+    process.exit(0);
   }
   info('Release type:', releaseTypes[releaseTypeIndex]);
   info('Checking git status cleanliness...');
