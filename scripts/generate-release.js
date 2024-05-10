@@ -1,4 +1,4 @@
-import { execSync, getLatestTag, info, rl } from './utils';
+import { execSync, getLatestTag, info, rl } from './utils.js';
 
 const draftRelease = () => {
   const latestVersion = getLatestTag();
