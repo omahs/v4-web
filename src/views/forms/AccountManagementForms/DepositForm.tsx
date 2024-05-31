@@ -14,7 +14,6 @@ import { AnalyticsEvent, AnalyticsEventData } from '@/constants/analytics';
 import { ButtonSize } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
 import { isMainnet } from '@/constants/networks';
-import { TransferNotificationTypes } from '@/constants/notifications';
 import {
   MAX_CCTP_TRANSFER_AMOUNT,
   MAX_PRICE_IMPACT,
@@ -48,7 +47,7 @@ import { getTransferInputs } from '@/state/inputsSelectors';
 
 import abacusStateManager from '@/lib/abacus';
 import { MustBigNumber } from '@/lib/numbers';
-import { getNobleChainId, NATIVE_TOKEN_ADDRESS } from '@/lib/squid';
+import { NATIVE_TOKEN_ADDRESS } from '@/lib/squid';
 import { log } from '@/lib/telemetry';
 import { parseWalletError } from '@/lib/wallet';
 
@@ -209,7 +208,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
     if (!signerWagmi || !publicClientWagmi) throw new Error('Missing signer');
     if (!sourceToken?.address || !sourceToken.decimals)
       throw new Error('Missing source token address');
-    if (!sourceChain?.rpc) throw new Error('Missing source chain rpc');
+    // if (!sourceChain?.rpc) throw new Error('Missing source chain rpc');
     if (!requestPayload?.targetAddress) throw new Error('Missing target address');
     if (!requestPayload?.value) throw new Error('Missing transaction value');
     if (sourceToken?.address === NATIVE_TOKEN_ADDRESS) return;
@@ -259,8 +258,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
           !requestPayload?.targetAddress ||
           !requestPayload.data ||
           !requestPayload.value ||
-          !requestPayload.gasLimit ||
-          !requestPayload.routeType
+          !requestPayload.gasLimit
         ) {
           throw new Error('Missing request payload');
         }
@@ -279,6 +277,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
           gasLimit: BigInt(requestPayload.gasLimit),
           value: requestPayload.routeType !== 'SEND' ? BigInt(requestPayload.value) : undefined,
         };
+        console.log('tx', tx);
         const txHash = await signerWagmi.sendTransaction(tx);
 
         if (txHash) {
