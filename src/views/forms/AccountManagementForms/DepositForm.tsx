@@ -14,6 +14,7 @@ import { AnalyticsEvent, AnalyticsEventData } from '@/constants/analytics';
 import { ButtonSize } from '@/constants/buttons';
 import { STRING_KEYS } from '@/constants/localization';
 import { isMainnet } from '@/constants/networks';
+import { TransferNotificationTypes } from '@/constants/notifications';
 import {
   MAX_CCTP_TRANSFER_AMOUNT,
   MAX_PRICE_IMPACT,
@@ -47,7 +48,7 @@ import { getTransferInputs } from '@/state/inputsSelectors';
 
 import abacusStateManager from '@/lib/abacus';
 import { MustBigNumber } from '@/lib/numbers';
-import { NATIVE_TOKEN_ADDRESS } from '@/lib/squid';
+import { NATIVE_TOKEN_ADDRESS, getNobleChainId } from '@/lib/squid';
 import { log } from '@/lib/telemetry';
 import { parseWalletError } from '@/lib/wallet';
 
@@ -257,8 +258,8 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
         if (
           !requestPayload?.targetAddress ||
           !requestPayload.data ||
-          !requestPayload.value ||
-          !requestPayload.gasLimit
+          !requestPayload.value
+          // !requestPayload.gasLimit
         ) {
           throw new Error('Missing request payload');
         }
@@ -273,8 +274,8 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
 
         const tx = {
           to: requestPayload.targetAddress as EvmAddress,
-          data: requestPayload.data as EvmAddress,
-          gasLimit: BigInt(requestPayload.gasLimit),
+          data: `${requestPayload.data}` as EvmAddress,
+          gasLimit: BigInt(160000),
           value: requestPayload.routeType !== 'SEND' ? BigInt(requestPayload.value) : undefined,
         };
         console.log('tx', tx);

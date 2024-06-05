@@ -102,7 +102,7 @@ class AbacusStateManager {
       import.meta.env.MODE === 'development' && import.meta.env.VITE_ENABLE_ABACUS_LOGGING // enableLogger
     );
     appConfigs.squidVersion = AbacusAppConfig.SquidVersion.V2;
-    appConfigs.routerVendor = AbacusAppConfig.RouterVendor.Squid;
+    appConfigs.routerVendor = AbacusAppConfig.RouterVendor.Skip;
 
     this.stateManager = new AsyncAbacusStateManager(
       '',
