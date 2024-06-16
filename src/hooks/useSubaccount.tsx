@@ -213,7 +213,6 @@ const useSubaccountContext = ({ localDydxWallet }: { localDydxWallet?: LocalWall
         if (!compositeClient) throw new Error('client not initialized');
         try {
           const transaction = JSON.parse(payload);
-
           const msg = compositeClient.withdrawFromSubaccountMessage(
             subaccountClient,
             amount.toFixed(usdcDecimals)

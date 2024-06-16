@@ -70,7 +70,7 @@ export const WithdrawForm = () => {
 
   const { sendSquidWithdraw } = useSubaccount();
   const { freeCollateral } = useAppSelector(getSubaccount, shallowEqual) ?? {};
-
+  console.log('free collat', freeCollateral);
   const {
     requestPayload,
     token,
@@ -108,6 +108,10 @@ export const WithdrawForm = () => {
   );
 
   useEffect(() => setSlippage(isCctp ? 0 : 0.01), [isCctp]);
+
+  useEffect(() => {
+    console.log('request payload', requestPayload);
+  }, [requestPayload]);
 
   useEffect(() => {
     abacusStateManager.setTransferValue({
@@ -183,6 +187,9 @@ export const WithdrawForm = () => {
             })
           );
         } else {
+          console.log('amount', debouncedAmountBN.toNumber());
+          console.log('request payload data', requestPayload.data);
+          console.log('is cctp', isCctp);
           const txHash = await sendSquidWithdraw(
             debouncedAmountBN.toNumber(),
             requestPayload.data,
@@ -372,6 +379,7 @@ export const WithdrawForm = () => {
     }
 
     if (routeErrors) {
+      console.log('routeerrors', routeErrors, routeErrorMessage);
       return {
         errorMessage: routeErrorMessage
           ? stringGetter({
@@ -453,7 +461,7 @@ export const WithdrawForm = () => {
     summary,
     usdcWithdrawalCapacity,
   ]);
-
+  console.log(summary);
   const isInvalidNobleAddress = Boolean(
     exchange && toAddress && !validateCosmosAddress(toAddress, 'noble')
   );

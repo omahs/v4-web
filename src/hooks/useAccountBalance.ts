@@ -51,7 +51,6 @@ export const useAccountBalance = ({
   const { chainTokenDenom, usdcDenom } = useTokenConfigs();
   const evmChainId = Number(useEnvConfig('ethereumChainId'));
   const stakingBalances = useAppSelector(getStakingBalances, shallowEqual);
-
   const evmQuery = useBalance({
     enabled: Boolean(!isCosmosChain && addressOrDenom?.startsWith('0x')),
     address: evmAddress,

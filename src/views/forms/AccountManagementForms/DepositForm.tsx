@@ -102,7 +102,6 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
   const [fromAmount, setFromAmount] = useState('');
   const [slippage, setSlippage] = useState(isCctp ? 0 : 0.01); // 1% slippage
   const debouncedAmount = useDebounce<string>(fromAmount, 500);
-
   // Async Data
   const { balance } = useAccountBalance({
     addressOrDenom: sourceToken?.address || CHAIN_DEFAULT_TOKEN_ADDRESS,
@@ -278,9 +277,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
           gasLimit: BigInt(160000),
           value: requestPayload.routeType !== 'SEND' ? BigInt(requestPayload.value) : undefined,
         };
-        console.log('tx', tx);
         const txHash = await signerWagmi.sendTransaction(tx);
-
         if (txHash) {
           addTransferNotification({
             txHash,
@@ -387,7 +384,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
     if (MustBigNumber(fromAmount).gt(MustBigNumber(balance))) {
       return stringGetter({ key: STRING_KEYS.DEPOSIT_MORE_THAN_BALANCE });
     }
-
+    console.log('api', summary?.aggregatePriceImpact);
     if (isMainnet && MustBigNumber(summary?.aggregatePriceImpact).gte(MAX_PRICE_IMPACT)) {
       return stringGetter({ key: STRING_KEYS.PRICE_IMPACT_TOO_HIGH });
     }

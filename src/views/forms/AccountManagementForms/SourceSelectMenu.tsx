@@ -60,7 +60,7 @@ export const SourceSelectMenu = ({
   const chains =
     (type === TransferType.deposit ? depositOptions : withdrawalOptions)?.chains?.toArray() ??
     EMPTY_ARR;
-
+  console.log('cctp deposti only', CCTPDepositOnly);
   const exchanges =
     (type === TransferType.deposit ? depositOptions : withdrawalOptions)?.exchanges?.toArray() ??
     EMPTY_ARR;
@@ -104,7 +104,7 @@ export const SourceSelectMenu = ({
       return true;
     })
     .sort((chain) => (cctpTokensByChainId[chain.value] ? -1 : 1));
-
+  console.log('chain items', chainItems);
   const exchangeItems = Object.values(exchanges).map((exchange) => ({
     value: exchange.type,
     label: exchange.string,

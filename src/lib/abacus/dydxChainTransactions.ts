@@ -28,8 +28,6 @@ import {
   type HumanReadablePlaceOrderPayload,
   type HumanReadableTransferPayload,
   type HumanReadableWithdrawPayload,
-  type QueryTypes,
-  type TransactionTypes,
 } from '@/constants/abacus';
 import { Hdkey } from '@/constants/account';
 import { DEFAULT_TRANSACTION_MEMO } from '@/constants/analytics';

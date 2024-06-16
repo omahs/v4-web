@@ -26,8 +26,6 @@ type ElementProps = {
   isExchange?: boolean;
 };
 
-const CURVE_DAO_TOKEN_ADDRESS = '0xD533a949740bb3306d119CC777fa900bA034cd52';
-
 const cctpTokensByAddress = cctpTokens.reduce(
   (acc, token) => {
     if (!acc[token.tokenAddress]) {
@@ -41,14 +39,19 @@ const cctpTokensByAddress = cctpTokens.reduce(
 
 export const TokenSelectMenu = ({ selectedToken, onSelectToken, isExchange }: ElementProps) => {
   const stringGetter = useStringGetter();
-  const { type, depositOptions, withdrawalOptions, resources } =
-    useAppSelector(getTransferInputs, shallowEqual) ?? {};
+  const {
+    type,
+    depositOptions,
+    withdrawalOptions,
+    resources,
+    token: _token,
+    chain,
+  } = useAppSelector(getTransferInputs, shallowEqual) ?? {};
   const { CCTPWithdrawalOnly, CCTPDepositOnly } = useEnvFeatures();
-
   const tokens =
     (type === TransferType.deposit ? depositOptions : withdrawalOptions)?.assets?.toArray() ??
     EMPTY_ARR;
-
+  console.log('token and chainId', _token, chain);
   const tokenItems = Object.values(tokens)
     .map((token) => ({
       value: token.type,
@@ -61,10 +64,7 @@ export const TokenSelectMenu = ({ selectedToken, onSelectToken, isExchange }: El
       },
       slotBefore: (
         // the curve dao token svg causes the web app to lag when rendered
-        <$Img
-          src={token.type !== CURVE_DAO_TOKEN_ADDRESS ? token.iconUrl ?? undefined : undefined}
-          alt=""
-        />
+        <$Img src={token.iconUrl ?? undefined} alt="" />
       ),
       slotAfter: !!cctpTokensByAddress[token.type] && (
         <$Text>
@@ -94,7 +94,6 @@ export const TokenSelectMenu = ({ selectedToken, onSelectToken, isExchange }: El
       return true;
     })
     .sort((token) => (cctpTokensByAddress[token.value] ? -1 : 1));
-
   return (
     <SearchSelectMenu
       items={[
