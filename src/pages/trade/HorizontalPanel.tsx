@@ -223,6 +223,7 @@ export const HorizontalPanel = ({ isOpen = true, setIsOpen }: ElementProps) => {
                 : [
                     !showCurrentMarket && FillsTableColumnKey.Market,
                     FillsTableColumnKey.Time,
+                    FillsTableColumnKey.MarginMode,
                     FillsTableColumnKey.Type,
                     FillsTableColumnKey.Side,
                     FillsTableColumnKey.AmountTag,

@@ -6,7 +6,7 @@ import type { ColumnSize } from '@react-types/table';
 import { shallowEqual } from 'react-redux';
 import styled, { css } from 'styled-components';
 
-import { type Asset, type SubaccountFill } from '@/constants/abacus';
+import { AbacusMarginMode, type Asset, type SubaccountFill } from '@/constants/abacus';
 import { DialogTypes } from '@/constants/dialogs';
 import { STRING_KEYS, type StringGetterFunction } from '@/constants/localization';
 import { EMPTY_ARR } from '@/constants/objects';
@@ -44,6 +44,7 @@ const MOBILE_FILLS_PER_PAGE = 50;
 export enum FillsTableColumnKey {
   Time = 'Time',
   Market = 'Market',
+  MarginMode = 'MarginMode',
   Action = 'Action',
   Side = 'Side',
   SideLongShort = 'Side-LongShort',
@@ -151,6 +152,21 @@ const getFillsTableColumnDef = ({
         label: stringGetter({ key: STRING_KEYS.MARKET }),
         renderCell: ({ asset, marketId }) => (
           <MarketTableCell asset={asset ?? undefined} marketId={marketId} />
+        ),
+      },
+      [FillsTableColumnKey.MarginMode]: {
+        columnKey: 'margin-mode',
+        getCellValue: (row) => row.marginMode?.name ?? '',
+        label: stringGetter({ key: STRING_KEYS.MARGIN_MODE }),
+        renderCell: ({ marginMode }) => (
+          <Output
+            type={OutputType.Text}
+            value={
+              marginMode === AbacusMarginMode.Cross
+                ? stringGetter({ key: STRING_KEYS.CROSS })
+                : stringGetter({ key: STRING_KEYS.ISOLATED })
+            }
+          />
         ),
       },
       [FillsTableColumnKey.Action]: {

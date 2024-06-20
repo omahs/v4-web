@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import {
+  AbacusMarginMode,
   type Asset,
   type Nullable,
   type SubaccountOrder,
@@ -45,7 +46,7 @@ import { getPerpetualMarkets } from '@/state/perpetualsSelectors';
 
 import { MustBigNumber, getNumberSign } from '@/lib/numbers';
 import { safeAssign } from '@/lib/objectHelpers';
-import { getMarginModeFromSubaccountNumber, getPositionMargin } from '@/lib/tradeData';
+import { getPositionMargin } from '@/lib/tradeData';
 import { orEmptyObj } from '@/lib/typeUtils';
 
 import { PositionsActionsCell } from './PositionsTable/PositionsActionsCell';
@@ -436,8 +437,7 @@ export const PositionsTable = ({
   const positions = useMemo(() => {
     return openPositions.filter((position) => {
       const matchesMarket = currentMarket == null || position.id === currentMarket;
-      const subaccountNumber = position.childSubaccountNumber;
-      const marginType = getMarginModeFromSubaccountNumber(subaccountNumber).name;
+      const marginType = position.marginMode?.name ?? AbacusMarginMode.Cross.name;
       const matchesType = marketTypeMatchesFilter(marginType, marketTypeFilter);
       return matchesMarket && matchesType;
     });

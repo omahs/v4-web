@@ -35,7 +35,6 @@ import { getSelectedLocale } from '@/state/localizationSelectors';
 
 import { MustBigNumber } from '@/lib/numbers';
 import { isMarketOrderType, isOrderStatusClearable, relativeTimeString } from '@/lib/orders';
-import { getMarginModeFromSubaccountNumber } from '@/lib/tradeData';
 
 type ElementProps = {
   orderId: string;
@@ -60,6 +59,7 @@ export const OrderDetailsDialog = ({ orderId, setIsOpen }: ElementProps) => {
     cancelReason,
     createdAtMilliseconds,
     expiresAtMilliseconds,
+    marginMode,
     marketId,
     orderFlags,
     orderSide,
@@ -77,8 +77,6 @@ export const OrderDetailsDialog = ({ orderId, setIsOpen }: ElementProps) => {
     triggerPrice,
     type,
   } = useParameterizedSelector(getOrderDetails, orderId)! ?? {};
-
-  const marginMode = getMarginModeFromSubaccountNumber(subaccountNumber);
 
   const marginModeLabel =
     marginMode === AbacusMarginMode.Cross

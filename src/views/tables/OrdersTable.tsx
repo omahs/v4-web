@@ -53,7 +53,6 @@ import {
   isOrderStatusClearable,
 } from '@/lib/orders';
 import { getStringsForDateTimeDiff } from '@/lib/timeUtils';
-import { getMarginModeFromSubaccountNumber } from '@/lib/tradeData';
 import { orEmptyObj } from '@/lib/typeUtils';
 
 import { OrderStatusIcon } from '../OrderStatusIcon';
@@ -308,12 +307,10 @@ const getOrdersTableColumnDef = ({
       [OrdersTableColumnKey.MarginType]: {
         columnKey: 'marginType',
         label: stringGetter({ key: STRING_KEYS.MARGIN_MODE }),
-        getCellValue: (row) => getMarginModeFromSubaccountNumber(row.subaccountNumber).name,
+        getCellValue: (row) => row.marginMode?.name ?? '',
         renderCell(row: OrderTableRow): ReactNode {
-          const marginMode = getMarginModeFromSubaccountNumber(row.subaccountNumber);
-
           const marginModeLabel =
-            marginMode === AbacusMarginMode.Cross
+            row.marginMode === AbacusMarginMode.Cross
               ? stringGetter({ key: STRING_KEYS.CROSS })
               : stringGetter({ key: STRING_KEYS.ISOLATED });
           return <Output type={OutputType.Text} value={marginModeLabel} />;
@@ -354,7 +351,7 @@ export const OrdersTable = ({
   const orders = useMemo(
     () =>
       (currentMarket ? marketOrders : allOrders).filter((order) => {
-        const orderType = getMarginModeFromSubaccountNumber(order.subaccountNumber).name;
+        const orderType = order.marginMode?.name ?? AbacusMarginMode.Cross.name;
         return marketTypeMatchesFilter(orderType, marketTypeFilter);
       }),
     [allOrders, currentMarket, marketOrders, marketTypeFilter]

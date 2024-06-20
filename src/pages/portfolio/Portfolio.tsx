@@ -95,6 +95,7 @@ const PortfolioPage = () => {
                     : [
                         FillsTableColumnKey.Time,
                         FillsTableColumnKey.Market,
+                        FillsTableColumnKey.MarginMode,
                         FillsTableColumnKey.Side,
                         FillsTableColumnKey.AmountPrice,
                         FillsTableColumnKey.TotalFee,

@@ -18,7 +18,7 @@ import { WithTooltip } from '@/components/WithTooltip';
 import { useAppDispatch } from '@/state/appTypes';
 import { openDialog } from '@/state/dialogs';
 
-import { getMarginModeFromSubaccountNumber, getPositionMargin } from '@/lib/tradeData';
+import { getPositionMargin } from '@/lib/tradeData';
 
 type PositionsMarginCellProps = {
   position: SubaccountPosition;
@@ -29,13 +29,12 @@ export const PositionsMarginCell = ({ position }: PositionsMarginCellProps) => {
   const dispatch = useAppDispatch();
 
   const { marginMode, marginModeLabel, margin } = useMemo(() => {
-    const { childSubaccountNumber } = position;
-    const derivedMarginMode = getMarginModeFromSubaccountNumber(childSubaccountNumber);
+    const { marginMode } = position;
 
     return {
-      marginMode: derivedMarginMode,
+      marginMode,
       marginModeLabel:
-        derivedMarginMode === AbacusMarginMode.Cross
+        marginMode === AbacusMarginMode.Cross
           ? stringGetter({ key: STRING_KEYS.CROSS })
           : stringGetter({ key: STRING_KEYS.ISOLATED }),
       margin: getPositionMargin({ position }),
