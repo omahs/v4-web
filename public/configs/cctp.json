@@ -24,10 +24,5 @@
     "chainId": "42161",
     "tokenAddress": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
     "name": "arbitrum"
-  },
-  {
-    "chainId": "11155111",
-    "tokenAddress": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
-    "name": "Sepolia USDC"
   }
 ]

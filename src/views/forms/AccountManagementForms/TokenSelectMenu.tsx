@@ -44,14 +44,14 @@ export const TokenSelectMenu = ({ selectedToken, onSelectToken, isExchange }: El
     depositOptions,
     withdrawalOptions,
     resources,
-    token: _token,
-    chain,
+    // token: _token,
+    // chain,
   } = useAppSelector(getTransferInputs, shallowEqual) ?? {};
   const { CCTPWithdrawalOnly, CCTPDepositOnly } = useEnvFeatures();
   const tokens =
     (type === TransferType.deposit ? depositOptions : withdrawalOptions)?.assets?.toArray() ??
     EMPTY_ARR;
-  console.log('token and chainId', _token, chain);
+  // console.log('token and chainId', _token, chain);
   const tokenItems = Object.values(tokens)
     .map((token) => ({
       value: token.type,

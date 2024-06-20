@@ -366,6 +366,16 @@ class AbacusStateManager {
   sendSocketRequest = (requestText: string) => {
     this.websocket.send(requestText);
   };
+
+  transferStatus = (
+    hash: string,
+    fromChainId: string | undefined,
+    toChainId: string | undefined,
+    isCctp: boolean,
+    requestId: string | undefined
+  ) => {
+    this.stateManager.transferStatus(hash, fromChainId, toChainId, isCctp, requestId);
+  };
 }
 
 const abacusStateManager = new AbacusStateManager();

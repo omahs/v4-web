@@ -49,3 +49,20 @@ export const fetchSquidStatus = async (
 export const getNobleChainId = () => {
   return isMainnet ? 'noble-1' : 'grand-1';
 };
+
+export const skipTrackTx = async (transactionHash: string, chainId: string | undefined) => {
+  const response = await fetch('https://api.skip.money/v2/tx/track', {
+    method: 'POST',
+    body: JSON.stringify({
+      tx_hash: transactionHash,
+      chain_id: chainId,
+    }),
+  });
+  return response;
+};
+
+export const fetchSkipStatus = async (transactionHash: string, chainId: string | undefined) => {
+  const url = `https://api.skip.money/v2/tx/status?tx_hash=${transactionHash}&chain_id=${chainId}`;
+  const response = await fetch(url);
+  return response;
+};

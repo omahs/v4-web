@@ -70,7 +70,6 @@ export const WithdrawForm = () => {
 
   const { sendSquidWithdraw } = useSubaccount();
   const { freeCollateral } = useAppSelector(getSubaccount, shallowEqual) ?? {};
-  console.log('free collat', freeCollateral);
   const {
     requestPayload,
     token,
@@ -108,10 +107,6 @@ export const WithdrawForm = () => {
   );
 
   useEffect(() => setSlippage(isCctp ? 0 : 0.01), [isCctp]);
-
-  useEffect(() => {
-    console.log('request payload', requestPayload);
-  }, [requestPayload]);
 
   useEffect(() => {
     abacusStateManager.setTransferValue({
@@ -187,18 +182,20 @@ export const WithdrawForm = () => {
             })
           );
         } else {
-          console.log('amount', debouncedAmountBN.toNumber());
-          console.log('request payload data', requestPayload.data);
-          console.log('is cctp', isCctp);
+          // console.log('amount', debouncedAmountBN.toNumber());
+          // console.log('request payload data', requestPayload.data);
+          // console.log('is cctp', isCctp);
           const txHash = await sendSquidWithdraw(
             debouncedAmountBN.toNumber(),
             requestPayload.data,
             isCctp
           );
+          console.log('tx hash', txHash);
+          console.log('request payload', requestPayload);
           const nobleChainId = getNobleChainId();
           const toChainId = exchange ? nobleChainId : chainIdStr || undefined;
           if (txHash && toChainId) {
-            addTransferNotification({
+            await addTransferNotification({
               txHash,
               type: TransferNotificationTypes.Withdrawal,
               fromChainId: !isCctp ? selectedDydxChainId : nobleChainId,
@@ -378,6 +375,13 @@ export const WithdrawForm = () => {
       };
     }
 
+    if (!toAddress) {
+      return {
+        alertType: AlertType.Warning,
+        errorMessage: stringGetter({ key: STRING_KEYS.WITHDRAW_MUST_SPECIFY_ADDRESS }),
+      };
+    }
+
     if (routeErrors) {
       console.log('routeerrors', routeErrors, routeErrorMessage);
       return {
@@ -387,13 +391,6 @@ export const WithdrawForm = () => {
               params: { ERROR_MESSAGE: routeErrorMessage },
             })
           : stringGetter({ key: STRING_KEYS.SOMETHING_WENT_WRONG }),
-      };
-    }
-
-    if (!toAddress) {
-      return {
-        alertType: AlertType.Warning,
-        errorMessage: stringGetter({ key: STRING_KEYS.WITHDRAW_MUST_SPECIFY_ADDRESS }),
       };
     }
 
@@ -461,7 +458,6 @@ export const WithdrawForm = () => {
     summary,
     usdcWithdrawalCapacity,
   ]);
-  console.log(summary);
   const isInvalidNobleAddress = Boolean(
     exchange && toAddress && !validateCosmosAddress(toAddress, 'noble')
   );

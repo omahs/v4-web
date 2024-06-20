@@ -279,7 +279,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
         };
         const txHash = await signerWagmi.sendTransaction(tx);
         if (txHash) {
-          addTransferNotification({
+          await addTransferNotification({
             txHash,
             toChainId: !isCctp ? selectedDydxChainId : getNobleChainId(),
             fromChainId: chainIdStr || undefined,

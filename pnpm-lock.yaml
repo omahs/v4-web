@@ -19811,7 +19811,7 @@ packages:
     dev: true
 
   file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.7.75.tgz:
-    resolution: {integrity: sha512-K19jpOXH5Yg3pgaVlxU+gQnvGu5vvAdMQF11YrY2nZ65JxkjymP7C/P2GHaOoQv0lo2S+r3oqgan6pdWI45vjA==, tarball: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.7.75.tgz}
+    resolution: {integrity: sha512-OxbzkwrI1vvEFjb22/1no80Wajnj4vrpThou55GXjLtWFpxp/VO8ASzQ70FWKjEd2tGe4LDSdBMWDeMmNyJ4ig==, tarball: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.7.75.tgz}
     name: '@dydxprotocol/v4-abacus'
     version: 1.7.75
     dependencies:

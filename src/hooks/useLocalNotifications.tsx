@@ -8,6 +8,7 @@ import type { TransferNotifcation } from '@/constants/notifications';
 
 import { useAccounts } from '@/hooks/useAccounts';
 
+import abacusStateManager from '@/lib/abacus';
 import { track } from '@/lib/analytics';
 import { fetchSquidStatus, STATUS_ERROR_GRACE_PERIOD } from '@/lib/squid';
 
@@ -73,9 +74,10 @@ const useLocalNotificationsContext = () => {
   );
 
   const addTransferNotification = useCallback(
-    (notification: TransferNotifcation) => {
-      const { txHash, triggeredAt, toAmount, type } = notification;
+    async (notification: TransferNotifcation) => {
+      const { txHash, triggeredAt, toAmount, type, fromChainId } = notification;
       setTransferNotifications([...transferNotifications, notification]);
+      // await skipTrackTx(txHash, fromChainId);
       // track initialized new transfer notification
       track(AnalyticsEvent.TransferNotification, {
         triggeredAt,
@@ -122,6 +124,16 @@ const useLocalNotificationsContext = () => {
                 currentStatus?.squidTransactionStatus === 'ongoing')
             ) {
               try {
+                console.log('calling abacus transfer status');
+                await abacusStateManager.transferStatus(
+                  txHash,
+                  fromChainId,
+                  toChainId,
+                  isCctp ?? false,
+                  txHash
+                );
+                // await skipTrackTx(txHash, fromChainId);
+                // console.log(await fetchSkipStatus(txHash, fromChainId));
                 const status = await fetchSquidStatus(
                   {
                     transactionId: txHash,
