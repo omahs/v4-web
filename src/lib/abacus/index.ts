@@ -45,8 +45,9 @@ import { setTradeFormInputs } from '@/state/inputs';
 import { getInputTradeOptions, getTransferInputs } from '@/state/inputsSelectors';
 
 import { LocaleSeparators } from '../numbers';
-import AbacusAnalytics from './analytics';
 // eslint-disable-next-line import/no-cycle
+import { shouldUseSkip } from '../rollout';
+import AbacusAnalytics from './analytics';
 import AbacusChainTransaction from './dydxChainTransactions';
 import AbacusFileSystem from './filesystem';
 import AbacusFormatter from './formatter';
@@ -103,6 +104,8 @@ class AbacusStateManager {
 
     const appConfigs = AbacusAppConfig.Companion.forWebAppWithIsolatedMargins;
     appConfigs.onboardingConfigs.squidVersion = OnboardingConfig.SquidVersion.V2;
+    console.log('A;LKSDJFAL;SKDJFAS;LKDFJAS;LDKFJAS;LDKFJA;DSKL HELLO BUDDY');
+    console.log('should use skip', shouldUseSkip());
 
     this.stateManager = new AsyncAbacusStateManager(
       '',
