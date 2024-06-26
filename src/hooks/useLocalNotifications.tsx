@@ -9,6 +9,7 @@ import type { TransferNotifcation } from '@/constants/notifications';
 import { useAccounts } from '@/hooks/useAccounts';
 
 import { track } from '@/lib/analytics';
+import { shouldUseSkip } from '@/lib/rollout';
 import { STATUS_ERROR_GRACE_PERIOD, fetchTransferStatus, trackSkipTx } from '@/lib/squid';
 
 import { useEndpointsConfig } from './useEndpointsConfig';
@@ -133,7 +134,7 @@ const useLocalNotificationsContext = () => {
                   baseUrl: skip,
                 };
                 // TODO: replace with statsig call
-                const useSkip = false;
+                const useSkip = shouldUseSkip();
                 if (!tracked && useSkip) {
                   const { tx_hash: trackedTxHash } = await trackSkipTx(skipParams);
                   // if no tx hash was returned, transfer has not yet been tracked

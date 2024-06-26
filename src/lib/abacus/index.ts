@@ -46,7 +46,7 @@ import { getInputTradeOptions, getTransferInputs } from '@/state/inputsSelectors
 
 import { LocaleSeparators } from '../numbers';
 // eslint-disable-next-line import/no-cycle
-import { shouldUseSkip } from '../rollout';
+import { getRouterVendor } from '../rollout';
 import AbacusAnalytics from './analytics';
 import AbacusChainTransaction from './dydxChainTransactions';
 import AbacusFileSystem from './filesystem';
@@ -104,8 +104,7 @@ class AbacusStateManager {
 
     const appConfigs = AbacusAppConfig.Companion.forWebAppWithIsolatedMargins;
     appConfigs.onboardingConfigs.squidVersion = OnboardingConfig.SquidVersion.V2;
-    console.log('A;LKSDJFAL;SKDJFAS;LKDFJAS;LDKFJAS;LDKFJA;DSKL HELLO BUDDY');
-    console.log('should use skip', shouldUseSkip());
+    appConfigs.onboardingConfigs.routerVendor = getRouterVendor();
 
     this.stateManager = new AsyncAbacusStateManager(
       '',
