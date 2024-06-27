@@ -40,13 +40,13 @@ import { DEFAULT_MARKETID } from '@/constants/markets';
 import { CURRENT_ABACUS_DEPLOYMENT, type DydxNetwork } from '@/constants/networks';
 import { CLEARED_SIZE_INPUTS, CLEARED_TRADE_INPUTS } from '@/constants/trade';
 
+// eslint-disable-next-line import/no-cycle
 import { type RootStore } from '@/state/_store';
 import { setTradeFormInputs } from '@/state/inputs';
 import { getInputTradeOptions, getTransferInputs } from '@/state/inputsSelectors';
 
 import { LocaleSeparators } from '../numbers';
 import AbacusAnalytics from './analytics';
-// eslint-disable-next-line import/no-cycle
 import AbacusChainTransaction from './dydxChainTransactions';
 import AbacusFileSystem from './filesystem';
 import AbacusFormatter from './formatter';
@@ -57,7 +57,7 @@ import AbacusStateNotifier from './stateNotification';
 import AbacusThreading from './threading';
 import AbacusWebsocket from './websocket';
 
-class AbacusStateManager {
+export class AbacusStateManager {
   private store: RootStore | undefined;
 
   private currentMarket: string | undefined;
@@ -74,7 +74,7 @@ class AbacusStateManager {
 
   chainTransactions: AbacusChainTransaction;
 
-  constructor() {
+  constructor(useSkip: boolean) {
     this.store = undefined;
     this.currentMarket = undefined;
     this.stateNotifier = new AbacusStateNotifier();
@@ -103,6 +103,7 @@ class AbacusStateManager {
 
     const appConfigs = AbacusAppConfig.Companion.forWebAppWithIsolatedMargins;
     appConfigs.onboardingConfigs.squidVersion = OnboardingConfig.SquidVersion.V2;
+    if (useSkip) appConfigs.onboardingConfigs.routerVendor = OnboardingConfig.RouterVendor.Skip;
 
     this.stateManager = new AsyncAbacusStateManager(
       '',
@@ -411,7 +412,7 @@ class AbacusStateManager {
   };
 }
 
-const abacusStateManager = new AbacusStateManager();
+const abacusStateManager = new AbacusStateManager(false);
 
 export const abacusHelper = AbacusHelper.Companion;
 export default abacusStateManager;

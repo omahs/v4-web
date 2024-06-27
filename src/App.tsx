@@ -48,6 +48,7 @@ import { useEnvFeatures } from './hooks/useEnvFeatures';
 import { useInitializePage } from './hooks/useInitializePage';
 import { useShouldShowFooter } from './hooks/useShouldShowFooter';
 import { useTokenConfigs } from './hooks/useTokenConfigs';
+import { AbacusProvider, useAbacus } from './lib/abacus/useAbacus';
 import breakpoints from './styles/breakpoints';
 
 const NewMarket = lazy(() => import('@/pages/markets/NewMarket'));
@@ -64,6 +65,7 @@ const TokenPage = lazy(() => import('@/pages/token/Token'));
 const queryClient = new QueryClient();
 
 const Content = () => {
+  const { abacusStateManager } = useAbacus();
   useInitializePage();
   useAnalytics();
 
@@ -75,7 +77,6 @@ const Content = () => {
   const location = useLocation();
   const isShowingHeader = isNotTablet;
   const isShowingFooter = useShouldShowFooter();
-
   const pathFromHash = useMemo(() => {
     if (location.hash === '') {
       return '';
@@ -86,7 +87,8 @@ const Content = () => {
   const { dialogAreaRef } = useDialogArea() ?? {};
 
   const showChainTokenPage = complianceState === ComplianceStates.FULL_ACCESS || isStakingEnabled;
-
+  if (!abacusStateManager) return <></>;
+  // Set store so (Abacus & v4-Client) classes can getState and dispatch
   return (
     <>
       <GlobalStyle />
@@ -175,6 +177,7 @@ const providers = [
   wrapProvider(DialogAreaProvider),
   wrapProvider(PotentialMarketsProvider),
   wrapProvider(AppThemeAndColorModeProvider),
+  wrapProvider(AbacusProvider),
 ];
 
 const App = () => {

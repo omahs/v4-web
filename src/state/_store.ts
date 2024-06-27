@@ -2,8 +2,6 @@ import { Middleware, configureStore } from '@reduxjs/toolkit';
 
 // TODO - fix cycle
 // eslint-disable-next-line import/no-cycle
-import abacusStateManager from '@/lib/abacus';
-
 import { accountSlice } from './account';
 import { appSlice } from './app';
 import appMiddleware from './appMiddleware';
@@ -40,7 +38,7 @@ export const store = configureStore({
 });
 
 // Set store so (Abacus & v4-Client) classes can getState and dispatch
-abacusStateManager.setStore(store);
+// abacusStateManager.setStore(store);
 
 export type RootStore = typeof store;
 export type RootState = ReturnType<typeof store.getState>;

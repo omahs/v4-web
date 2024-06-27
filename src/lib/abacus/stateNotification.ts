@@ -66,7 +66,6 @@ class AbacusStateNotifier implements AbacusStateNotificationProtocol {
     const changes = new Set(incomingChanges?.changes.toArray() ?? []);
     const marketIds = incomingChanges?.markets?.toArray();
     const subaccountNumbers = incomingChanges?.subaccountNumbers?.toArray();
-
     if (updatedState) {
       if (changes.has(Changes.assets)) {
         dispatch(
