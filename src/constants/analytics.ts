@@ -54,6 +54,7 @@ export const AnalyticsUserProperties = unionize(
 
     // StatSigFlags
     StatsigFlags: ofType<{ [key in StatSigFlags]?: boolean }>(),
+    SkipEnabled: ofType<boolean | null>(),
 
     // Network
     Network: ofType<DydxNetwork>(),
@@ -75,6 +76,7 @@ export const AnalyticsUserPropertyLoggableTypes = {
   Breakpoint: 'breakpoint',
   Version: 'version',
   StatsigFlags: 'statsigFlags',
+  SkipEnabled: 'skipEnabled',
   Network: 'network',
   WalletType: 'walletType',
   WalletConnectionType: 'walletConnectionType',

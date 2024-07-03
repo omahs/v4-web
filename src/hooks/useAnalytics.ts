@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { StatSigFlags } from '@/types/statsig';
 import { shallowEqual } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
@@ -71,6 +72,7 @@ export const useAnalytics = () => {
   // AnalyticsUserProperty.StatsigConfigs
   useEffect(() => {
     identify(AnalyticsUserProperties.StatsigFlags(statsigConfig));
+    identify(AnalyticsUserProperties.SkipEnabled(statsigConfig[StatSigFlags.ffSkipMigration]));
   }, [statsigConfig]);
 
   // AnalyticsUserProperty.Network
